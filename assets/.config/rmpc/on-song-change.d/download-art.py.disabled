@@ -1,0 +1,121 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import json
+import requests
+
+
+class Logger:
+    log_file: str
+
+    def __init__(self, log_file):
+        self.log_file = log_file
+
+        if not os.path.isfile(self.log_file):
+            open(self.log_file, "a").close()
+
+    def log(self, message: str):
+        with open(self.log_file, "a") as f:
+            f.write(f"{message}\n")
+
+
+class CoverSearch:
+    logger: Logger
+
+    def __init__(self, artist: str, album: str, logger: Logger) -> None:
+        self.artist = artist
+        self.album = album
+        self.logger = logger
+
+        self.logger.log(f"CoverSearch initialized: {artist} - {album}.".format(artist=artist, album=album))
+
+    def search(self) -> list[str]:
+        if not self.artist or not self.album:
+            raise ValueError("Artist and album must be provided.")
+
+        url = "https://covers.musichoarders.xyz/api/search"
+
+        headers = {
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0",
+            "Accept": "*/*",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+            "Referer": "https://covers.musichoarders.xyz/",
+            "content-type": "application/json",
+            "x-page-query": "",
+            "x-page-referrer": "",
+            "x-session": "8703aa10732a4c199bb00c8197170411",
+            "Origin": "https://covers.musichoarders.xyz",
+            "Connection": "keep-alive",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-origin",
+            "Priority": "u=0",
+            "TE": "trailers"
+        }
+
+        payload = {
+            "artist": self.artist,
+            "album": self.album,
+            "country": "au",
+            "sources": ["amazonmusic", "applemusic", "deezer", "discogs", "fanarttv", "lastfm"]
+        }
+
+        return self.parse_response(requests.post(url, headers=headers, data=json.dumps(payload)).text)
+
+    def parse_response(self, result: str) -> list[str] | None:
+        try:
+            output = []
+
+            for line in result.strip().split('\n'):
+                result = json.loads(line)
+
+                if result["type"] != "cover":
+                    logger.log("Skipping non-cover type: " + str(result))
+                    continue
+
+                if result["releaseInfo"]["title"] != self.album or result["releaseInfo"]["artist"] != self.artist:
+                    logger.log("Skipping cover for {artist} - {album}".format(artist=result["releaseInfo"]["artist"], album=result["releaseInfo"]["title"]))
+                    continue
+
+                logger.log("Found cover for {artist} - {album}: {url}".format(artist=result["releaseInfo"]["artist"], album=result["releaseInfo"]["title"], url=result["bigCoverUrl"]))
+
+                output.append(result["bigCoverUrl"])
+
+            return output
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {e}", file=sys.stderr)
+
+        return None
+
+
+if __name__ == "__main__":
+    artist = os.environ.get("ARTIST", None)
+    album = os.environ.get("ALBUM", None)
+
+    logger = Logger("/tmp/rmpc-download-art.log")
+
+    logger.log("skipping art download - script not ready")
+    sys.exit(0)
+
+    try:
+        app = CoverSearch(artist, album, logger)
+
+        cover_urls = app.search()
+
+        logger.log("Cover URLs found.")
+        logger.log(json.dumps(cover_urls))
+
+        dest_dir = "/tmp/rmpc-covers"
+        os.makedirs(dest_dir, exist_ok=True)
+
+        for i, url in enumerate(cover_urls):
+            response = requests.get(url)
+            if response.status_code == 200:
+                filename = os.path.join(dest_dir, f"file_{i}{os.path.splitext(url)[-1]}")
+                with open(filename, "wb") as f:
+                    f.write(response.content)
+
+    except ValueError as e:
+        logger.log("ERROR: {error}".format(error=str(e)))

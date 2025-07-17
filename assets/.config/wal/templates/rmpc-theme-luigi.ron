@@ -1,0 +1,204 @@
+// COMMAND TO GENERATE:
+// wal -n -i /home/ashley/Pictures/triple-screen-wallpapers/hua-lu-4-6-1.jpg --backend=colorz
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+#![enable(unwrap_variant_newtypes)]
+(
+    default_album_art_path: None,
+    show_song_table_header: true,
+    draw_borders: true,
+    browser_column_widths: [0, 50, 50],
+    text_color: "{foreground}",
+    tab_bar: (
+        enabled: true,
+        active_style: (fg: "{background}", bg: "{color2}", modifiers: ""),
+        inactive_style: (fg: "{foreground}", bg: "{background}", modifiers: ""),
+    ),
+    // currently playing item
+    highlighted_item_style: (fg: "{foreground}", bg: "{color9}", modifiers: ""),
+    // currently selected item
+    current_item_style: (fg: "{foreground}", bg: "{color3}", modifiers: ""),
+    borders_style: (fg: "{color5}", modifiers: "Bold"),
+    highlight_border_style: (fg: "{color7}"),
+    symbols: (song: "󰝚 ", dir: " ", marker: "* ", ellipsis: "\u{{2026}}"),
+    progress_bar: (
+        symbols: ["█", "█", "█"],
+        // symbols: ["\u{{25a0}}", "\u{{25b6}}", " "],
+        track_style: (fg: "{color9}"),
+        elapsed_style: (fg: "{foreground}"),
+        thumb_style: (fg: "{foreground}"),
+    ),
+    scrollbar: (
+        // symbols: ["", "", "", ""],
+        symbols: ["│", "█", "▲", "▼"],
+        track_style: (fg: "{color9}"),
+        ends_style: (fg: "{color3}"),
+        thumb_style: (fg: "{color3}"),
+    ),
+    // format of songs in the "queue" table - list of columns
+    song_table_format: [
+        (
+            prop: (
+                kind: Property(Artist),
+                style: (fg: "{color2}"),
+                default: (kind: Text("Unknown Artist"), style: (fg: "{color12}"))
+            ),
+            width: "22%"
+        ),
+        (
+            prop: (
+                kind: Property(Title), 
+                style: (fg: "{foreground}"),
+                default: (kind: Property(Filename), style: (fg: "gray")),
+            ),
+            width: "100%",
+        ),
+        (
+            prop: (
+                kind: Property(Album), 
+                style: (fg: "{color2}"),
+                default: (kind: Text("Unknown Album"), style: (fg: "{color12}"))
+            ),
+            width: "22%",
+        ),
+        (
+            prop: (
+                kind: Property(Duration),
+                style: (fg: "{color2}"),
+                default: (
+                    kind: Text("-:--"), 
+                    style: (fg: "{color12}")
+                )
+            ),
+            width: "10",
+            alignment: Right,
+        )
+    ],
+    // format of songs in the "library" table - same as `song_table_format` but ignore styles
+    browser_song_format: [
+        (kind: Property(Track)),
+        (kind: Text(" ")),
+        (kind: Property(Title))
+    ],
+    layout: Split(
+        direction: Vertical,
+        panes: [
+            (
+                size: "3",
+                pane: Pane(Tabs),
+            ),
+            (
+                size: "100%",
+                pane: Pane(TabContent)
+            ),
+            (
+                size: "6",
+                borders: "TOP | BOTTOM",
+                pane: Split(
+                    direction: Vertical,
+                    panes: [
+                        (
+                            size: "3",
+                            pane: Pane(Header),
+                        ),
+                        ( 
+                            size: "1",
+                            pane: Pane(ProgressBar),
+                        ),
+                    ]
+                )
+            // uncomment this and comment out the previous element to try to get cava working
+            //     pane: Split(
+            //         direction: Horizontal,
+            //         panes: [
+            //             (
+            //                 size: "90%",
+            //                 borders: "NONE",
+            //                 pane: Split(
+            //                     direction: Vertical,
+            //                     panes: [
+            //                         (
+            //                             size: "1",
+            //                             pane: Pane(Header),
+            //                         ),
+            //                         ( 
+            //                             size: "1",
+            //                             pane: Pane(ProgressBar),
+            //                         ),
+            //                     ]
+            //                 )
+            //             // ),
+            //             // (
+            //             //     size: "10%",
+            //             //     borders: "LEFT",
+            //             //     pane: Pane(Cava)
+            //             )
+            //         ]
+            //     )
+            )
+        ]
+    ),
+    header: (
+        rows: [
+            (
+                left: [
+                    (
+                        kind: Property(Status(StateV2(
+                            playing_label: " ", 
+                            paused_label: "❚❚", 
+                            stopped_label: "■ "
+                        ))), 
+                        style: (fg: "{color2}", modifiers: "Bold")
+                    ),
+                ],
+                center: [
+                    (
+                        kind: Property(
+                            Song(Title)), 
+                            style: (fg: "{foreground}",modifiers: "Bold"),
+                            default: (
+                                kind: Property(Song(Filename)), 
+                                style: (fg: "{foreground}",modifiers: "Bold")
+                            )
+                    )
+                ],
+                right: [
+                    (kind: Text("Vol: "), style: (fg: "#837C6F", modifiers: "Bold")),
+                    (kind: Property(Status(Volume)), style: (fg: "#837C6F", modifiers: "Bold")),
+                    (kind: Text("% "), style: (fg: "#837C6F", modifiers: "Bold"))
+                ]
+            ),
+            (
+                left: [
+                    (kind: Property(Status(Elapsed)),style: (fg: "{foreground}")),
+                    (kind: Text("/"),style: (fg: "{color0}")),
+                    (kind: Property(Status(Duration)),style: (fg: "{color5}")),
+                ],
+                center: [
+                    (kind: Property(Song(Artist)), style: (fg: "{color2}", modifiers: "Bold"),
+                        default: (kind: Text("Unknown Artist"), style: (fg: "{color14}", modifiers: "Bold"))
+                    ),
+                ],
+                right: [
+                    (
+                        kind: Property(Widget(States(
+                            active_style: (fg: "#e2dcd1", modifiers: "Bold"),
+                            separator_style: (fg: "#e2dcd1")))
+                        ),
+                        style: (fg: "#757067")
+                    ),
+                ]
+            ),
+        ],
+    ),
+    cava: (
+        bg_color: "{background}",
+        bar_color: Gradient({{
+            0: "{color2}",
+            100: "{color1}"
+        }})
+    ),
+    lyrics: (
+        timestamp: true
+    )
+)

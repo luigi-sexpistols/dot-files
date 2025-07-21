@@ -199,6 +199,6 @@
         }})
     ),
     lyrics: (
-        timestamp: true
+        timestamp: false
     )
 )

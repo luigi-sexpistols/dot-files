@@ -28,14 +28,12 @@ if [ "$HAS_LRC" = "false" ]; then
   # Create and populate the lyrics file
   [ ! -f "$LRC_FILE" ] && touch "$LRC_FILE"
   [ ! -s "$LRC_FILE" ] && echo '' > "$LRC_FILE"
-
   {
     echo "[ar:$ARTIST]"
     echo "[al:$ALBUM]"
     echo "[ti:$TITLE]"
-  } >>"$LRC_FILE"
-
-  echo "$synced_lyrics" | sed -E '/^\[(ar|al|ti):/d' >> "$LRC_FILE"
+    echo "$synced_lyrics" | sed -E '/^\[(ar|al|ti):/d'
+  } >> "$LRC_FILE"
 
   [ -z "$PID" ] && rmpc remote --pid "$PID" indexlrc --path "$LRC_FILE"
 fi

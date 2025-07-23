@@ -2,7 +2,11 @@
 
 scripts_dir="$(realpath "$0" | xargs dirname)/on-song-change.d"
 
+enable_logging="true"
+
 x-log () {
+  [ "$enable_logging" != "true" ] && return 0
+
   local log_file=/tmp/rmpc.on-song-change.log
   local log_dir="$(dirname "$log_file")"
 

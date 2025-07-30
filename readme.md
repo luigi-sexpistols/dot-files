@@ -17,3 +17,4 @@ Dot files are essential for personalizing and managing your Unix-like system env
 ## Todo
 
 - Automate making .zshrc.d user-writable only.
+- Get rid of this ass readme and replace it with something less obviously AI-generated generic bullshit.

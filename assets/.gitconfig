@@ -1,0 +1,65 @@
+[user]
+signingkey = 0C1817107E10E8D0
+email = ashley@richmond.cool
+name = Ashley Richmond
+
+[commit]
+gpgsign = true
+
+[gpg]
+program = /usr/bin/gpg
+
+[core]
+autocrlf = false
+editor = vim
+
+[pull]
+rebase = false
+ff = only
+
+# todo - install aliases into each repo's config at setup time
+[alias]
+repo-setup = "!f() { /home/ashley/Development/git-project-commands/src/repo-setup.sh; }; f"
+branch-pull = "!f() { /home/ashley/Development/git-project-commands/src/branch-pull.sh $1; }; f"
+branch-start = "!f() { /home/ashley/Development/git-project-commands/src/branch-start.sh $1 $2; }; f"
+branch-checkout = "!f() { /home/ashley/Development/git-project-commands/src/branch-checkout.sh $1 $2; }; f"
+branch-rename = "!f() { /home/ashley/Development/git-project-commands/src/branch-rename.sh $1 $2 $3; }; f"
+branch-duplicate = "!f() { /home/ashley/Development/git-project-commands/src/branch-duplicate.sh $1 $2 $3; }; f"
+
+pull-develop = "!f() { git branch-pull develop; }; f"
+pull-master = "!f() { git branch-pull master; }; f"
+pd = pull-develop
+pm = pull-master
+
+feature-start = "!f() { git branch-start feature $1; }; f"
+feature-checkout = "!f() { git branch-checkout feature $1; }; f"
+feature-rename = "!f() { git branch-rename feature $1 $2; }; f"
+feature-duplicate = "!f() { git branch-duplicate feature $1 $2; }; f"
+
+bugfix-start = "!f() { git branch-start bugfix $1; }; f"
+bugfix-checkout = "!f() { git branch-checkout bugfix $1; }; f"
+bugfix-rename = "!f() { git branch-rename bugfix $1 $2; }; f"
+
+hotfix-start = "!f() { git branch-start hotfix $1; }; f"
+hotfix-checkout = "!f() { git branch-checkout hotfix $1; }; f"
+hotfix-rename = "!f() { git branch-rename hotfix $1 $2; }; f"
+
+fs = feature-start
+fc = feature-checkout
+fr = feature-rename
+fd = feature-duplicate
+bs = bugfix-start
+bc = bugfix-checkout
+br = bugfix-rename
+hs = hotfix-start
+hc = hotfix-checkout
+hr = hotfix-rename
+
+# todo - change the below to match the processes above
+
+release-start = "!f() { git pd && git flow release start $1; }; f"
+release-checkout = "!f() { git fetch && git checkout release/$1; git pull; }; f"
+rs = release-start
+rc = release-checkout
+
+backmerge = "!f() { git pm && git pd && git merge master; }; f"

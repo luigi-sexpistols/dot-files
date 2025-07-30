@@ -1,0 +1,5 @@
+alias aws-ssp-prod="aws --profile ssp-production"
+alias aws-ssp-dev="aws --profile ssp-dev"
+alias aws-ssp-test="aws --profile ssp-test"
+alias aws-ssp-qa="aws --profile ssp-qa"
+alias aws-ssp-local="docker run -it --rm --network ssp-npe_ssp -e AWS_ACCESS_KEY_ID=FAKEKEY -e AWS_SECRET_ACCESS_KEY=secret -e AWS_DEFAULT_REGION=ap-southeast-2 amazon/aws-cli --endpoint http://aws:4566 --no-cli-pager"

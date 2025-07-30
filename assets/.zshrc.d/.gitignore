@@ -1,0 +1,3 @@
+*.disabled
+
+# todo - there's gotta be a more convenient way to have scripts in here without having them committed to git

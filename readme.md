@@ -13,3 +13,7 @@ Dot files are configuration files on Unix-like systems (such as Linux) whose nam
 - `.vimrc`: Vim editor configuration
 
 Dot files are essential for personalizing and managing your Unix-like system environment.
+
+## Todo
+
+- Automate making .zshrc.d user-writable only.

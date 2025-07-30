@@ -15,7 +15,7 @@ if [ "$HAS_LRC" = "false" ]; then
   )"
 
   if [ -z "$synced_lyrics" ]; then
-      [ -z "$PID" ] && rmpc remote --pid "$PID" status "Failed to download lyrics for $ARTIST - $TITLE" --level error
+      [ -n "$PID" ] && rmpc remote --pid "$PID" status "Failed to download lyrics for $ARTIST - $TITLE" --level error
       exit 0
   fi
 
@@ -35,22 +35,19 @@ if [ "$HAS_LRC" = "false" ]; then
     echo "$synced_lyrics" | sed -E '/^\[(ar|al|ti):/d'
   } >> "$LRC_FILE"
 
-  [ -z "$PID" ] && rmpc remote --pid "$PID" indexlrc --path "$LRC_FILE"
+  [ -n "$PID" ] && rmpc remote --pid "$PID" indexlrc --path "$LRC_FILE"
 fi
 
-# exit to avoid running the example
-exit 0
-
 # example non-rmpc usage:
-(
-  export      ARTIST='Leprous' && \
-  export       ALBUM='Aphelion' && \
-  export        DATE='2021' && \
-  export TRACKNUMBER='1' && \
-  export       TITLE='Running Low' && \
-  export    LRC_FILE="~/.cache/rmpc/lyrics/${ARTIST}/${DATE} ${ALBUM}/$(printf '%02d' "$TRACKNUMBER") ${TITLE}.lrc" && \
-  export     HAS_LRC="$([ ! -s "$LRC_FILE" ])" && \
-  export     VERSION='0.9.0' && \
-  ~/.config/rmpc/on-song-change.d/download-lyrics.sh && \
-  cat "$LRC_FILE"
-)
+#(
+#  export      ARTIST='King Gizzard & the Lizard Wizard' && \
+#  export       ALBUM='Nonagon Infinity' && \
+#  export        DATE='2016' && \
+#  export TRACKNUMBER='3' && \
+#  export       TITLE='Gamma Knife' && \
+#  export    LRC_FILE="${HOME}/.cache/rmpc/lyrics/${ARTIST}/${DATE} ${ALBUM}/$(printf '%02d' "$TRACKNUMBER") ${TITLE}.lrc" && \
+#  export     HAS_LRC="$([ ! -s "$LRC_FILE" ] && echo "false")" && \
+#  export     VERSION='0.9.0' && \
+#  ~/.config/rmpc/on-song-change.d/download-lyrics.sh && \
+#  cat "$LRC_FILE"
+#)

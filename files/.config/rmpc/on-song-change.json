@@ -1,0 +1,8 @@
+{
+  "mode": "",
+  "backends": {
+    "caligula_s_horse/bloom": "wal",
+    "metallica/death_magnetic": "wal",
+    "rivers_of_nihil/where_owls_know_my_name": "colorz"
+  }
+}

@@ -1,32 +1,53 @@
 #!/usr/bin/env bash
 
+# todo - why isn't x-log outputting to the log file from this script?
+# todo - test other backends
+# todo - reload kitty tab colours on generating scheme
+
 set -e
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 trap 'on_exit $? $LINENO' EXIT
-on_exit() { [ $1 -ne 0 ] && x-log "Failed command (code $1) on line $2: '${last_command}'"; }
+on_exit() { [ $1 -ne 0 ] && x-log "Failed command (code $1) on line $2: '${last_command}'" ERROR; }
+
+x-log "Starting update-color-scheme script."
 
 config_dir="$HOME"/.config/rmpc
-art_dir="$HOME"/.cache/rmpc/art
-status_file="$HOME"/.cache/rmpc/status
+cache_dir="$HOME"/.cache/rmpc
 
-# todo - store a preferred backend per album... somewhere
-# maybe a git-style config file in the art dir?
-#
-# use "wal":
-# metallica - death magnetic
-
-# set mode to either '' (dark) and 'l' (light)
-mode=''
+art_dir="$cache_dir"/art
+current_art_file="$cache_dir"/current_art
+status_file="$cache_dir"/current_album
+prefs_file="$config_dir"/on-song-change.json
 
 default_art_file="$HOME"/Pictures/full.png
 
 slugify () {
-    echo "$1" | \
-        sed -E 's/ & / and /g' | \
-        sed -E 's/[^a-zA-Z0-9]/_/g' | \
-        sed -E 's/_{2,}/_/g' | \
-        sed -E 's/^_//g' | \
-        tr '[:upper:]' '[:lower:]'
+  echo "$1" \
+  | sed -E 's/ & / and /g' \
+  | sed -E 's/[^a-zA-Z0-9]/_/g' \
+  | sed -E 's/_{2,}/_/g' \
+  | sed -E 's/^_//g' \
+  | sed -E 's/_$//g' \
+  | tr '[:upper:]' '[:lower:]'
+}
+
+init-prefs () {
+  if [ ! -f "$prefs_file" ]; then
+    x-log "Preferences file not found, creating default preferences file at '$prefs_file'."
+    jq -n '{ "backends": {} }' > "$prefs_file"
+  fi
+}
+
+get-pref () {
+  x-log "Retrieving preference at '$1' from '$prefs_file'."
+  cat "$prefs_file" | jq -r "$1"
+}
+
+get-backend-pref () {
+  local album_slug="$(slugify "$ALBUM")"
+  local artist_slug="$(slugify "$ARTIST")"
+
+  get-pref ".backends.\"${artist_slug}/${album_slug}\""
 }
 
 extract-art-where-missing () {
@@ -49,15 +70,42 @@ extract-art-where-missing () {
 
 generate-scheme () {
   local art_file="$1"
+  local backend_pref=''
+  local mode=''
+  local backends=()
+
+  backend_pref="$(get-backend-pref)"
+
+  x-log "Got backend preference: '$backend_pref'."
+
+  if [ -n "$backend_pref" ] && [ "$backend_pref" != "null" ]; then
+    backends=("$backend_pref")
+    x-log "Using preferred backend '$backend_pref'."
+  else
+    backends=(wal colorz)
+    x-log "No preferred backend set, using default backends."
+  fi
+
+  mode="$(get-pref '.mode' '')"
+  x-log "Got mode preference: '$mode'."
+
+  if [ -n "$mode" ] && [ "$mode" != "null" ]; then
+    x-log "Using preferred mode '$mode'."
+  else
+    mode=''
+    x-log "No preferred mode set, using '' (dark)."
+  fi
 
   # try each backend until one succeeds; we prefer the schemes `colorz` generates, but fall back to `wal` in rare cases
-  for b in wal colorz; do
-    x-log "Trying color scheme update with backend '$b'"
+  for b in "${backends[@]}"; do
+    x-log "Trying color scheme update with backend '$b'."
 
     # `wal` must be run with the `-e` flag to ensure it doesn't interfere with rmpc
-    if wal -ne$mode -i "$art_file" --backend="$b"; then
-      x-log "Color scheme updated using backend '$b'"
+    if wal -ne$mode -i "$art_file" --backend="$b" > /dev/null 2>&1; then
+      x-log "Color scheme updated."
       break
+    else
+      x-log "$wal_output" ERROR
     fi
   done
 }
@@ -65,19 +113,19 @@ generate-scheme () {
 reload-rmpc () {
   local theme="$(cat "$config_dir"/config.ron | grep 'theme' | grep -Eo '"[^"]+"' | grep -Eo '[^"]+')"
 
-  rmpc remote set theme "${config_dir}/themes/${theme}.ron"
+  rmpc remote --pid "$PID" set theme "${config_dir}/themes/${theme}.ron" > /tmp/rmpc.reload-rmpc.txt 2>&1
   x-log "Reloaded rmpc theme"
 }
 
 reload-pywalfox () {
-  pywalfox update
+  pywalfox update > /tmp/rmpc.reload-pywalfox.txt 2>&1
   x-log "Reloaded Firefox theme"
 }
 
 reload-plasma () {
   # unset and set the pywal colorscheme to ensure it reloads
   for scheme in BreathDark Pywal; do
-    plasma-apply-colorscheme "$scheme"
+    plasma-apply-colorscheme "$scheme" > /tmp/rmpc.reload-plasma.txt 2>&1
   done
 
   x-log "Reloaded Plasma colorscheme"
@@ -87,7 +135,6 @@ set-previous-album () {
   {
     echo "ARTIST=$ARTIST"
     echo "ALBUM=$ALBUM"
-    echo "TITLE=$TITLE"
   } > "$status_file"
 
   x-log "Set previous album info in status file '${status_file}'"
@@ -108,6 +155,7 @@ main () {
   }
 
   if (
+    init-prefs && \
     art_file="$(extract-art-where-missing)" && \
     generate-scheme "$art_file" && \
     set-previous-album && \

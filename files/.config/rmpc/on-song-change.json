@@ -2,10 +2,14 @@
   "mode": "",
   "backend": {
     "strategy": "random",
-    "override": {},
-    "override.disabled": {
+    "override": {
+      "bakahira/we_are_the_future": "colorz",
+      "eyeliner/high_fashion_mood_music": "wal",
+      "oak/sequences": "wal",
       "rivers_of_nihil/where_owls_know_my_name": "colorz",
+      "show_me_a_dinosaur/dust": "colorthief",
       "wayfarer/american_gothic": "wal"
-    }
+    },
+    "override.disabled": {}
   }
 }

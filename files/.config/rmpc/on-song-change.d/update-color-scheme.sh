@@ -4,6 +4,10 @@
 
 x-log () {
   echo "[${2:-INFO}] $1" >&2
+
+  if [ -n "$2" ] && [ "$2" = "ERROR" ]; then
+    rmpc remote --pid "$PID" status "$1" --level "$(printf '%s\n' "${2,,}")"
+  fi
 }
 
 set -e
@@ -178,12 +182,6 @@ set-previous-album () {
 }
 
 is-new-album () {
-  echo "STATUS FILE:"
-  cat "$status_file"
-  echo "VALUES:"
-  echo "ARTIST=$ARTIST"
-  echo "ALBUM=$ALBUM"
-
   grep -qiE "^ARTIST=$ARTIST" "$status_file" && \
   grep -qiE "^ALBUM=$ALBUM" "$status_file" && \
     return 1

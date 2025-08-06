@@ -2,12 +2,12 @@
 
 scripts_dir="$(realpath "$0" | xargs dirname)/on-song-change.d"
 
-enable_logging="false"
+enable_logging="true"
+log_file=/tmp/rmpc.on-song-change.log
 
 x-log () {
   [ "$enable_logging" != "true" ] && return 0
 
-  local log_file=/tmp/rmpc.on-song-change.log
   local log_dir="$(dirname "$log_file")"
 
   local message="$1"
@@ -45,10 +45,15 @@ for n in "$scripts_dir"/*.*; do
 
   x-log "Running script: $(dirname $n | xargs basename)/$(basename $n)"
 
-  if ! "$n"; then
-    x-log "Script failed: $(dirname $n | xargs basename)/$(basename $n)" ERROR
+  output="$("$n" 2>&1)"
+  exit_code=$?
+
+  echo "$output" >> "$log_file"
+
+  if [ $exit_code -ne 0 ]; then
+    x-log "Script failed (${exit_code}): $(dirname $n | xargs basename)/$(basename $n)" ERROR
   else
-    x-log "Script succeeded: $(dirname $n | xargs basename)/$(basename $n)"
+    x-log "Script succeeded (${exit_code}): $(dirname $n | xargs basename)/$(basename $n)"
   fi
 done
 

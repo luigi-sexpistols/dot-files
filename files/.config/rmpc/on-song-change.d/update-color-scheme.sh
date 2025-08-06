@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 
-# todo - why isn't x-log outputting to the log file from this script?
-# todo - test other backends
 # todo - reload kitty tab colours on generating scheme
+
+x-log () {
+  echo "[${2:-INFO}] $1" >&2
+}
 
 set -e
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
-trap 'on_exit $? $LINENO' EXIT
+#trap 'on_exit $? $LINENO' ERR
+trap 'on_exit $? $LINENO' ERR
 on_exit() { [ $1 -ne 0 ] && x-log "Failed command (code $1) on line $2: '${last_command}'" ERROR; }
 
 x-log "Starting update-color-scheme script."
@@ -21,6 +24,8 @@ prefs_file="$config_dir"/on-song-change.json
 
 default_art_file="$HOME"/Pictures/full.png
 
+declare global_used_backend='<NULL>'
+
 slugify () {
   echo "$1" \
   | sed -E 's/ & / and /g' \
@@ -34,7 +39,7 @@ slugify () {
 init-prefs () {
   if [ ! -f "$prefs_file" ]; then
     x-log "Preferences file not found, creating default preferences file at '$prefs_file'."
-    jq -n '{ "backends": {} }' > "$prefs_file"
+    jq -n '{ "backends": {}, "backend-strategy": "random" }' > "$prefs_file"
   fi
 }
 
@@ -47,7 +52,22 @@ get-backend-pref () {
   local album_slug="$(slugify "$ALBUM")"
   local artist_slug="$(slugify "$ARTIST")"
 
-  get-pref ".backends.\"${artist_slug}/${album_slug}\""
+  get-pref ".backend.override.\"${artist_slug}/${album_slug}\""
+}
+
+get-backend-strategy-pref () {
+  get-pref '.backend.strategy'
+}
+
+get-backend () {
+  case "$(get-backend-strategy-pref)" in
+    'random')
+      echo "${backends[RANDOM % ${#backends[@]}]}"
+      ;;
+    'first')
+      echo "${backends[0]}"
+      ;;
+  esac
 }
 
 extract-art-where-missing () {
@@ -73,6 +93,7 @@ generate-scheme () {
   local backend_pref=''
   local mode=''
   local backends=()
+  local backend
 
   backend_pref="$(get-backend-pref)"
 
@@ -82,7 +103,7 @@ generate-scheme () {
     backends=("$backend_pref")
     x-log "Using preferred backend '$backend_pref'."
   else
-    backends=(wal colorz)
+    backends=(wal colorz colorthief haishoku)
     x-log "No preferred backend set, using default backends."
   fi
 
@@ -96,12 +117,27 @@ generate-scheme () {
     x-log "No preferred mode set, using '' (dark)."
   fi
 
-  # try each backend until one succeeds; we prefer the schemes `colorz` generates, but fall back to `wal` in rare cases
-  for b in "${backends[@]}"; do
+  # try each backend until one succeeds
+  while true; do
+    [ ${#backends[@]} -eq 0 ] && \
+      x-log 'No backends left to try, exiting.' && \
+      return 1
+
+    b="$(get-backend)"
+
+    new_backends=()
+    for item in "${backends[@]}"; do
+      if [[ "$item" != "$b" ]]; then
+        new_backends+=("$item")
+      fi
+    done
+    backends=("${new_backends[@]}")
+
     x-log "Trying color scheme update with backend '$b'."
 
     # `wal` must be run with the `-e` flag to ensure it doesn't interfere with rmpc
     if wal -ne$mode -i "$art_file" --backend="$b" > /dev/null 2>&1; then
+      global_used_backend="$b"
       x-log "Color scheme updated."
       break
     else
@@ -135,12 +171,19 @@ set-previous-album () {
   {
     echo "ARTIST=$ARTIST"
     echo "ALBUM=$ALBUM"
+    echo "BACKEND=$global_used_backend"
   } > "$status_file"
 
   x-log "Set previous album info in status file '${status_file}'"
 }
 
 is-new-album () {
+  echo "STATUS FILE:"
+  cat "$status_file"
+  echo "VALUES:"
+  echo "ARTIST=$ARTIST"
+  echo "ALBUM=$ALBUM"
+
   grep -qiE "^ARTIST=$ARTIST" "$status_file" && \
   grep -qiE "^ALBUM=$ALBUM" "$status_file" && \
     return 1

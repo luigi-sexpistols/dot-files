@@ -2,11 +2,26 @@
 
 # todo - reload kitty tab colours on generating scheme
 
-x-log () {
-  echo "[${2:-INFO}] $1" >&2
+rmpc-remote () {
+  rmpc remote --pid "$PID" "$@"
+}
 
-  if [ -n "$2" ] && [ "$2" = "ERROR" ]; then
-    rmpc remote --pid "$PID" status "$1" --level "$(printf '%s\n' "${2,,}")"
+rmpc-notify () {
+  [ -n "$PID" ] && rmpc-remote status "$error" --level error
+}
+
+x-log () {
+  local message="$1"
+  local level="${2:-INFO}"
+
+  [ -z "$message" ] \
+    && x-log "Empty message given to x-log (level $level)." ERROR \
+    && return 0
+
+  echo "[$level] $message" >&2
+
+  if [ "$level" = "ERROR" ]; then
+    rmpc-notify "$message" "$(printf '%s\n' "${level,,}")"
   fi
 }
 
@@ -28,6 +43,7 @@ prefs_file="$config_dir"/on-song-change.json
 
 default_art_file="$HOME"/Pictures/full.png
 
+declare backends=()
 declare global_used_backend='<NULL>'
 
 slugify () {
@@ -49,18 +65,32 @@ init-prefs () {
 
 get-pref () {
   x-log "Retrieving preference at '$1' from '$prefs_file'."
-  cat "$prefs_file" | jq -r "$1"
+  cat "$prefs_file" | jq -c "$1"
 }
 
 get-backend-pref () {
   local album_slug="$(slugify "$ALBUM")"
   local artist_slug="$(slugify "$ARTIST")"
+  local value
+  local backends=()
 
-  get-pref ".backend.override.\"${artist_slug}/${album_slug}\""
+  value="$(get-pref ".backend.override.\"${artist_slug}/${album_slug}\"")"
+
+  if [[ "$value" =~ ^\".*\"$ ]]; then
+    # is string
+    backends+=("$(echo "$value" | jq -r '.')")
+  elif [[ "$value" =~ ^\[.*\]$ ]]; then
+    # is array
+    readarray -t backends <<< "$(echo "$value" | jq -r '.[]')"
+  else
+    return $LINENO
+  fi
+
+  echo "${backends[@]}"
 }
 
 get-backend-strategy-pref () {
-  get-pref '.backend.strategy'
+  get-pref '.backend.strategy' | jq -r '.'
 }
 
 get-backend () {
@@ -94,24 +124,22 @@ extract-art-where-missing () {
 
 generate-scheme () {
   local art_file="$1"
-  local backend_pref=''
   local mode=''
-  local backends=()
+  local new_backends
   local backend
 
-  backend_pref="$(get-backend-pref)"
+  backends=($(get-backend-pref))
 
-  x-log "Got backend preference: '$backend_pref'."
+  x-log "Got backend preference: '$(echo "${backends[@]}")'."
 
-  if [ -n "$backend_pref" ] && [ "$backend_pref" != "null" ]; then
-    backends=("$backend_pref")
-    x-log "Using preferred backend '$backend_pref'."
+  if [ "${#backends[@]}" -gt 0 ]; then
+    x-log "Using preferred backend from config."
   else
     backends=(wal colorz colorthief haishoku)
     x-log "No preferred backend set, using default backends."
   fi
 
-  mode="$(get-pref '.mode' '')"
+  mode="$(get-pref '.mode' '' | jq -r '.')"
   x-log "Got mode preference: '$mode'."
 
   if [ -n "$mode" ] && [ "$mode" != "null" ]; then
@@ -139,8 +167,12 @@ generate-scheme () {
 
     x-log "Trying color scheme update with backend '$b'."
 
+    echo "wal: wal -ne${mode} -i ${art_file} --backend=${b}"
+    wal_output="$(wal -ne$mode -i "$art_file" --backend="$b")"
+    wal_code=$?
+
     # `wal` must be run with the `-e` flag to ensure it doesn't interfere with rmpc
-    if wal -ne$mode -i "$art_file" --backend="$b" > /dev/null 2>&1; then
+    if [ $wal_code -eq 0 ]; then
       global_used_backend="$b"
       x-log "Color scheme updated."
       break
@@ -153,7 +185,7 @@ generate-scheme () {
 reload-rmpc () {
   local theme="$(cat "$config_dir"/config.ron | grep 'theme' | grep -Eo '"[^"]+"' | grep -Eo '[^"]+')"
 
-  rmpc remote --pid "$PID" set theme "${config_dir}/themes/${theme}.ron" > /tmp/rmpc.reload-rmpc.txt 2>&1
+  rmpc-remote set theme "${config_dir}/themes/${theme}.ron" > /tmp/rmpc.reload-rmpc.txt 2>&1
   x-log "Reloaded rmpc theme"
 }
 
@@ -190,26 +222,19 @@ is-new-album () {
 }
 
 main () {
-  is-new-album || {
+  if ! is-new-album; then
     x-log "No new album detected, skipping theme update."
-    exit 0
-  }
-
-  if (
-    init-prefs && \
-    art_file="$(extract-art-where-missing)" && \
-    generate-scheme "$art_file" && \
-    set-previous-album && \
-    reload-rmpc && \
-    reload-pywalfox && \
-    reload-plasma \
-  ); then
-    x-log "Theme set successfully."
-  else
-    error="Failed to set theme."
-    x-log "$error" ERROR
-    rmpc remote --pid "$PID" status "$error" --level error
+    return 0
   fi
+
+  init-prefs
+  art_file="$(extract-art-where-missing)"
+  generate-scheme "$art_file"
+  set-previous-album
+  reload-rmpc
+  reload-pywalfox
+  reload-plasma
+  x-log "Theme set successfully."
 }
 
 main

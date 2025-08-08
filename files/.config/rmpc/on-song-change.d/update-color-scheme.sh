@@ -27,9 +27,8 @@ x-log () {
 
 set -e
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
-#trap 'on_exit $? $LINENO' ERR
-trap 'on_exit $? $LINENO' ERR
-on_exit() { [ $1 -ne 0 ] && x-log "Failed command (code $1) on line $2: '${last_command}'" ERROR; }
+trap 'on_exit $? $LINENO' EXIT
+on_exit() { [ $1 -ne 0 ] && x-log "Failed command (code $1) on line $2: '${last_command}'" ERROR && exit $2; }
 
 x-log "Starting update-color-scheme script."
 
@@ -43,8 +42,8 @@ prefs_file="$config_dir"/on-song-change.json
 
 default_art_file="$HOME"/Pictures/full.png
 
-declare backends=()
-declare global_used_backend='<NULL>'
+backends=()
+global_used_backend='<NULL>'
 
 slugify () {
   echo "$1" \
@@ -64,8 +63,18 @@ init-prefs () {
 }
 
 get-pref () {
-  x-log "Retrieving preference at '$1' from '$prefs_file'."
-  cat "$prefs_file" | jq -c "$1"
+  local root_pref='.update_color_scheme'
+  local value_pref="$1"
+
+  if [ "$value_pref" =~ ^\. ]; then
+    x-log "Invalid preference path '$value_pref'; must start with a dot."
+    exit $LINENO
+  fi
+
+  local json_path="${root_pref}${value_pref}"
+
+  x-log "Retrieving preference at '${json_path}' from '$prefs_file'."
+  cat "$prefs_file" | jq -c "$json_path"
 }
 
 get-backend-pref () {
@@ -75,14 +84,19 @@ get-backend-pref () {
   local backends=()
 
   value="$(get-pref ".backend.override.\"${artist_slug}/${album_slug}\"")"
+  x-log "Value: $value"
 
-  if [[ "$value" =~ ^\".*\"$ ]]; then
+  if [[ "$value" == 'null' ]]; then
+    # no override, use global preference
+    backends=("$(get-pref '.backend.default' | jq -r '.[]')")
+  elif [[ "$value" =~ ^\".*\"$ ]]; then
     # is string
     backends+=("$(echo "$value" | jq -r '.')")
   elif [[ "$value" =~ ^\[.*\]$ ]]; then
     # is array
     readarray -t backends <<< "$(echo "$value" | jq -r '.[]')"
   else
+    x-log "Invalid backend preference format for '$artist_slug/$album_slug', expected string or array, got: '$value'" ERROR
     return $LINENO
   fi
 
@@ -135,8 +149,8 @@ generate-scheme () {
   if [ "${#backends[@]}" -gt 0 ]; then
     x-log "Using preferred backend from config."
   else
-    backends=(wal colorz colorthief haishoku)
-    x-log "No preferred backend set, using default backends."
+    x-log "No backend preference found, exiting." ERROR
+    exit $LINENO
   fi
 
   mode="$(get-pref '.mode' '' | jq -r '.')"

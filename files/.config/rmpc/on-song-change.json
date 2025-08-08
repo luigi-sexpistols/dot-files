@@ -1,15 +1,20 @@
 {
-  "mode": "",
-  "backend": {
-    "strategy": "random",
-    "override": {
-      "bakahira/we_are_the_future": "colorz",
-      "eyeliner/high_fashion_mood_music": "wal",
-      "oak/sequences": "wal",
-      "rivers_of_nihil/where_owls_know_my_name": ["wal", "colorz"],
-      "show_me_a_dinosaur/dust": "wal",
-      "wayfarer/american_gothic": "wal"
-    },
-    "override.disabled": {}
+  "update_color_scheme": {
+    "mode": "",
+    "backend": {
+      "strategy": "random",
+      "default": ["wal", "colorz", "haishoku", "colorthief"],
+      "override": {
+        "gnome/vestiges_of_verumex_visidrome": ["wal", "colorz", "haishoku"],
+        "wayfarer/american_gothic": ["wal", "colorz", "colorthief"]
+      },
+      "override-disabled": {
+        "bakahira/we_are_the_future": "colorz",
+        "eyeliner/high_fashion_mood_music": "wal",
+        "oak/sequences": "wal",
+        "rivers_of_nihil/where_owls_know_my_name": ["wal", "colorz"],
+        "show_me_a_dinosaur/dust": "wal"
+      }
+    }
   }
 }

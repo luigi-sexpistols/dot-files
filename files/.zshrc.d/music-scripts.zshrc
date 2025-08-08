@@ -20,6 +20,18 @@ wal-backend () {
       | tr '[:upper:]' '[:lower:]'
     }
 
+    p-regenerate () {
+        (
+            # in its own subshell to avoid polluting the environment
+            export PID="$(pidof -s rmpc)"
+            export ARTIST="$(cat "$status_file" | grep -Eo '^ARTIST=.+$' | cut -d '=' -f 2-)"
+            export ALBUM="$(cat "$status_file" | grep -Eo '^ALBUM=.+$' | cut -d '=' -f 2-)"
+
+            rm -rf "$status_file"
+            ~/.config/rmpc/on-song-change.d/update-color-scheme.sh
+        )
+    }
+
     p-save () {
         local temp_file=/tmp/rmpc-prefs.json
         local artist album backend
@@ -51,6 +63,7 @@ wal-backend () {
         local command="$1"
 
         case "$command" in
+            'regenerate') p-regenerate ;;
             'save') p-save ;;
             'current') p-current ;;
             'reset-status') p-reset-status ;;

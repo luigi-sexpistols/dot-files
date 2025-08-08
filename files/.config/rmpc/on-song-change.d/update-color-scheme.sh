@@ -36,7 +36,6 @@ config_dir="$HOME"/.config/rmpc
 cache_dir="$HOME"/.cache/rmpc
 
 art_dir="$cache_dir"/art
-current_art_file="$cache_dir"/current_art
 status_file="$cache_dir"/current_album
 prefs_file="$config_dir"/on-song-change.json
 
@@ -66,7 +65,7 @@ get-pref () {
   local root_pref='.update_color_scheme'
   local value_pref="$1"
 
-  if [ "$value_pref" =~ ^\. ]; then
+  if [[ "$value_pref" =~ ^\\. ]]; then
     x-log "Invalid preference path '$value_pref'; must start with a dot."
     exit $LINENO
   fi
@@ -181,7 +180,6 @@ generate-scheme () {
 
     x-log "Trying color scheme update with backend '$b'."
 
-    echo "wal: wal -ne${mode} -i ${art_file} --backend=${b}"
     wal_output="$(wal -ne$mode -i "$art_file" --backend="$b")"
     wal_code=$?
 
@@ -228,6 +226,8 @@ set-previous-album () {
 }
 
 is-new-album () {
+  [ ! -f "$status_file" ] && return 0
+
   grep -qiE "^ARTIST=$ARTIST" "$status_file" && \
   grep -qiE "^ALBUM=$ALBUM" "$status_file" && \
     return 1
@@ -236,6 +236,8 @@ is-new-album () {
 }
 
 main () {
+  set -e
+
   if ! is-new-album; then
     x-log "No new album detected, skipping theme update."
     return 0
@@ -249,6 +251,8 @@ main () {
   reload-pywalfox
   reload-plasma
   x-log "Theme set successfully."
+
+  set +e
 }
 
 main

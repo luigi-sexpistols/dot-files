@@ -18,7 +18,7 @@ x-log () {
     && x-log "Empty message given to x-log (level $level)." ERROR \
     && return 0
 
-  echo "[$level] $message" >&2
+  echo "[$level] $(basename "$0") | $message" >&2
 
   if [ "$level" = "ERROR" ]; then
     rmpc-notify "$message" "$(printf '%s\n' "${level,,}")"
@@ -82,7 +82,7 @@ get-backend-pref () {
   local value
   local backends=()
 
-  value="$(get-pref ".backend.override.\"${artist_slug}/${album_slug}\"")"
+  value="$(get-pref ".backend.override.${artist_slug}.${album_slug}")"
   x-log "Value: $value"
 
   if [[ "$value" == 'null' ]]; then
@@ -236,8 +236,6 @@ is-new-album () {
 }
 
 main () {
-  set -e
-
   if ! is-new-album; then
     x-log "No new album detected, skipping theme update."
     return 0
@@ -251,8 +249,8 @@ main () {
   reload-pywalfox
   reload-plasma
   x-log "Theme set successfully."
-
-  set +e
 }
 
+set -e
 main
+set +e

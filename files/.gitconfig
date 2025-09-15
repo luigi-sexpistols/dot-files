@@ -17,7 +17,6 @@ editor = vim
 rebase = false
 ff = only
 
-# todo - install aliases into each repo's config at setup time
 [alias]
 repo-setup = "!f() { /home/ashley/Development/git-project-commands/src/repo-setup.sh; }; f"
 branch-pull = "!f() { /home/ashley/Development/git-project-commands/src/branch-pull.sh $1; }; f"
@@ -28,8 +27,6 @@ branch-duplicate = "!f() { /home/ashley/Development/git-project-commands/src/bra
 
 pull-develop = "!f() { git branch-pull develop; }; f"
 pull-master = "!f() { git branch-pull master; }; f"
-pd = pull-develop
-pm = pull-master
 
 feature-start = "!f() { git branch-start feature $1; }; f"
 feature-checkout = "!f() { git branch-checkout feature $1; }; f"
@@ -44,6 +41,8 @@ hotfix-start = "!f() { git branch-start hotfix $1; }; f"
 hotfix-checkout = "!f() { git branch-checkout hotfix $1; }; f"
 hotfix-rename = "!f() { git branch-rename hotfix $1 $2; }; f"
 
+pd = pull-develop
+pm = pull-master
 fs = feature-start
 fc = feature-checkout
 fr = feature-rename
@@ -55,11 +54,10 @@ hs = hotfix-start
 hc = hotfix-checkout
 hr = hotfix-rename
 
-# todo - change the below to match the processes above
-
+# todo - change the below to match the processes above (if and when i ever work on a git-flow project again...)
 release-start = "!f() { git pd && git flow release start $1; }; f"
 release-checkout = "!f() { git fetch && git checkout release/$1; git pull; }; f"
 rs = release-start
 rc = release-checkout
 
-backmerge = "!f() { git pm && git pd && git merge master; }; f"
+back-merge = "!f() { git pm && git pd && git merge master; }; f"

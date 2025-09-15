@@ -5,7 +5,7 @@
 #![enable(unwrap_variant_newtypes)]
 (
     default_album_art_path: None,
-    show_song_table_header: true,
+    show_song_table_header: false,
     draw_borders: true,
     browser_column_widths: [0, 50, 50],
     text_color: "{foreground}",
@@ -71,7 +71,7 @@
                 )
             ),
             width: "10",
-            alignment: Right,
+            alignment: Right
         )
     ],
     // format of songs in the "library" table - same as `song_table_format` but ignore styles

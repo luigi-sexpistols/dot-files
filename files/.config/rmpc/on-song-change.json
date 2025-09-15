@@ -3,10 +3,48 @@
     "mode": "",
     "backend": {
       "strategy": "random",
-      "default": ["wal", "colorz", "haishoku", "colorthief"],
+      "default": [
+        "wal",
+        "colorz"
+      ],
+      "others": [
+        "haishoku",
+        "colorthief"
+      ],
       "override": {
+        "between_the_buried_and_me": {
+          "colors_ii": ["wal"]
+        },
+        "blood_incantation": {
+          "absolute_elsewhere": ["wal"],
+          "luminescent_bridge_ep": ["colorz"]
+        },
+        "devin_townsend": {
+          "z2_dark_matters": ["wal"],
+          "z2_sky_blue": ["wal"]
+        },
+        "king_gizzard_and_the_lizard_wizard": {
+          "float_along_fill_your_lungs": ["wal"],
+          "petrodragonic_apocalypse_or_dawn_of_eternal_night_an_annihilation_of_planet_earth_and_the_beginning_of_merciless_damnation": ["colorz","wal"]
+        },
+        "leprous": {
+          "pitfalls": ["colorthief"]
+        },
+        "mastodon": {
+          "crack_the_skye": ["wal"]
+        },
+        "opeth": {
+          "ghost_reveries": ["colorz"]
+        },
+        "rivers_of_nihil": {
+          "where_owls_know_my_name": ["wal"]
+        },
+        "tesseract": {
+          "altered_state": ["wal"]
+        }
       },
       "override_pending": {}
     }
   }
 }
+

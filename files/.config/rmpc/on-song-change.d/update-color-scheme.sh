@@ -25,6 +25,8 @@ x-log () {
   fi
 }
 
+type slugify &>/dev/null || source "$HOME"/.zshrc.d/01-dependency-functions.zshrc
+
 set -e
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 trap 'on_exit $? $LINENO' EXIT
@@ -43,16 +45,6 @@ default_art_file="$HOME"/Pictures/full.png
 
 backends=()
 global_used_backend='<NULL>'
-
-slugify () {
-  echo "$1" \
-  | sed -E 's/ & / and /g' \
-  | sed -E 's/[^a-zA-Z0-9]/_/g' \
-  | sed -E 's/_{2,}/_/g' \
-  | sed -E 's/^_//g' \
-  | sed -E 's/_$//g' \
-  | tr '[:upper:]' '[:lower:]'
-}
 
 init-prefs () {
   if [ ! -f "$prefs_file" ]; then
@@ -78,7 +70,7 @@ get-pref () {
 
 get-backend-pref () {
   local album_slug="$(slugify "$ALBUM")"
-  local artist_slug="$(slugify "$ARTIST")"
+  local artist_slug="$(slugify "$ALBUMARTIST")"
   local value
   local backends=()
 
@@ -118,7 +110,7 @@ get-backend () {
 }
 
 extract-art-where-missing () {
-  local art_file="$art_dir/$(slugify "$ARTIST")/$(slugify "$ALBUM")"
+  local art_file="$art_dir/$(slugify "$ALBUMARTIST")/$(slugify "$ALBUM")"
 
   # if the art file doesn't exist, pull it from rmpc
   if [ ! -f "$art_file" ]; then
@@ -141,7 +133,14 @@ generate-scheme () {
   local new_backends
   local backend
 
-  backends=($(get-backend-pref))
+  echo "WAL_BACKEND = '$WAL_BACKEND'"
+
+  if [ -n "$WAL_BACKEND" ]; then
+    x-log "WAL_BACKEND is set to '$WAL_BACKEND', using that as the only backend."
+    backends=("$WAL_BACKEND")
+  else
+    backends=($(get-backend-pref))
+  fi
 
   x-log "Got backend preference: '$(echo "${backends[@]}")'."
 
@@ -217,7 +216,7 @@ reload-plasma () {
 
 set-previous-album () {
   {
-    echo "ARTIST=$ARTIST"
+    echo "ARTIST=$ALBUMARTIST"
     echo "ALBUM=$ALBUM"
     echo "BACKEND=$global_used_backend"
   } > "$status_file"
@@ -228,7 +227,7 @@ set-previous-album () {
 is-new-album () {
   [ ! -f "$status_file" ] && return 0
 
-  grep -qiE "^ARTIST=$ARTIST" "$status_file" && \
+  grep -qiE "^ARTIST=$ALBUMARTIST" "$status_file" && \
   grep -qiE "^ALBUM=$ALBUM" "$status_file" && \
     return 1
 

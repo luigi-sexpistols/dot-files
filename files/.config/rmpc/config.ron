@@ -5,15 +5,14 @@
     address: "/run/user/1000/mpd/socket",
     password: None,
     theme: "luigi",
-	enable_config_hot_reload: false,
+    enable_config_hot_reload: false,
     cache_dir: None,
     on_song_change: ["/home/ashley/.config/rmpc/on-song-change.sh"],
-    // on_song_change: None,
     volume_step: 5,
     max_fps: 30,
     scrolloff: 0,
     rewind_to_start_sec: 10,
-    wrap_navigation: false,
+    wrap_navigation: true,
     enable_mouse: true,
     status_update_interval_ms: 1000,
     select_current_song_on_change: true,
@@ -92,7 +91,7 @@
             "<C-s>":   Save,
             "a":       AddToPlaylist,
             "d":       Delete,
-	    "<Del>":   Delete,
+            "<Del>":   Delete,
             "i":       ShowInfo,
             "C":       JumpToCurrent,
         },
@@ -127,27 +126,41 @@
                     (
                         size: "100%",
                         borders: "NONE",
-                        pane: Pane(Lyrics)
+                        pane: Split(
+                            direction: Vertical,
+                            panes: [
+                                (
+                                    size: "30%",
+                                    borders: "NONE",
+                                    pane: Pane(Queue)
+                                ),
+                                (
+                                    size: "100%",
+                                    borders: "TOP",
+                                    pane: Pane(Lyrics)
+                                )
+                            ]
+                        )
                     )
                 ]
             )
         ),
-        (
-            name: "Queue",
-            pane: Pane(Queue)
-        ),
+        // (
+        //     name: "Queue",
+        //     pane: Pane(Queue)
+        // ),
         // (
         //     name: "Search",
         //     pane: Pane(Search),
         // ),
-    //    (
-    //         name: "Playlists",
-    //         pane: Pane(Playlists),
-    //     ),
-       (
-            name: "Library",
-            pane: Pane(AlbumArtists),
-        ),
+        // (
+        //      name: "Playlists",
+        //      pane: Pane(Playlists),
+        // ),
+        (
+             name: "Library",
+             pane: Pane(AlbumArtists),
+        )
     ],
     cava: (
         framerate: 60,

@@ -1,4 +1,13 @@
 {
+  "lyrics": {
+    "override": {
+      "king_gizzard_and_the_lizard_wizard": {
+        "petrodragonic_apocalypse_or_dawn_of_eternal_night_an_annihilation_of_planet_earth_and_the_beginning_of_merciless_damnation": {
+          "album": "PetroDragonic Apocalypse"
+        }
+      }
+    }
+  },
   "update_color_scheme": {
     "mode": "",
     "backend": {

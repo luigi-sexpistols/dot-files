@@ -1,17 +1,49 @@
 #!/bin/env bash
 
-lrclib_api_url="https://lrclib.net"
+get-override-pref () {
+  local root_pref='.lyrics.override'
+  local value_pref="$1"
+
+  if [[ "$value_pref" =~ ^\\. ]]; then
+    x-log "Invalid preference path '$value_pref'; must start with a dot."
+    exit $LINENO
+  fi
+
+  local json_path="${root_pref}${value_pref}"
+
+  x-log "Retrieving preference at '${json_path}' from '$prefs_file'."
+  cat "$prefs_file" | jq -c "$json_path"
+}
+
+echo "HAS_LRC: $HAS_LRC" >&2
+echo "LRC_FILE: $LRC_FILE" >&2
+
+config_dir="$HOME"/.config/rmpc
+prefs_file="$config_dir"/on-song-change.json
+
+type slugify &>/dev/null || source "$HOME"/.zshrc.d/01-dependency-functions.zshrc
 
 if [ "$HAS_LRC" = "false" ]; then
   mkdir -p "$(dirname "$LRC_FILE")"
 
+  prefs_artist="$(slugify "$ARTIST")"
+  prefs_album="$(slugify "$ALBUM")"
+
+  overrides="$(get-override-pref ".[\"$prefs_artist\"][\"$prefs_album\"]")"
+  artist_override="$(echo "$overrides" | jq -r ".artist // \"$ARTIST\"")"
+  album_override="$(echo "$overrides" | jq -r ".album // \"$ALBUM\"")"
+
+  echo "Overrides: $overrides" >&2
+  echo "Artist override: $artist_override" >&2
+  echo "Album override: $album_override" >&2
+
   synced_lyrics="$(
     curl -X GET -sG \
       -H "Lrclib-Client: rmpc-$VERSION" \
-      --data-urlencode "artist_name=$ARTIST" \
-      --data-urlencode "album_name=$ALBUM" \
+      --data-urlencode "artist_name=$artist_override" \
+      --data-urlencode "album_name=$album_override" \
       --data-urlencode "track_name=$TITLE" \
-      "$lrclib_api_url/api/get" | jq -r '.syncedLyrics'
+      "https://lrclib.net/api/get" | jq -r '.syncedLyrics'
   )"
 
   if [ -z "$synced_lyrics" ]; then

@@ -26,11 +26,11 @@ type slugify &>/dev/null || source "$HOME"/.zshrc.d/01-dependency-functions.zshr
 if [ "$HAS_LRC" = "false" ]; then
   mkdir -p "$(dirname "$LRC_FILE")"
 
-  prefs_artist="$(slugify "$ARTIST")"
+  prefs_artist="$(slugify "$ALBUMARTIST")"
   prefs_album="$(slugify "$ALBUM")"
 
   overrides="$(get-override-pref ".[\"$prefs_artist\"][\"$prefs_album\"]")"
-  artist_override="$(echo "$overrides" | jq -r ".artist // \"$ARTIST\"")"
+  artist_override="$(echo "$overrides" | jq -r ".artist // \"$ALBUMARTIST\"")"
   album_override="$(echo "$overrides" | jq -r ".album // \"$ALBUM\"")"
 
   echo "Overrides: $overrides" >&2
@@ -47,19 +47,19 @@ if [ "$HAS_LRC" = "false" ]; then
   )"
 
   if [ -z "$synced_lyrics" ]; then
-      [ -n "$PID" ] && rmpc remote --pid "$PID" status "Failed to download lyrics for $ARTIST - $TITLE" --level error
+      [ -n "$PID" ] && rmpc remote --pid "$PID" status "Failed to download lyrics for $ALBUMARTIST - $TITLE" --level error
       exit 0
   fi
 
   if [ "$synced_lyrics" = "null" ]; then
       # no need to log this, it just means no lyrics were found
-      # rmpc remote --pid "$PID" status "Lyrics for $ARTIST - $TITLE not found" --level warn
+      # rmpc remote --pid "$PID" status "Lyrics for $ALBUMARTIST - $TITLE not found" --level warn
       exit 0
   fi
 
   # populate the lyrics file
   {
-    echo "[ar:$ARTIST]"
+    echo "[ar:$ALBUMARTIST]"
     echo "[al:$ALBUM]"
     echo "[ti:$TITLE]"
     echo "$synced_lyrics" | sed -E '/^\[(ar|al|ti):/d'

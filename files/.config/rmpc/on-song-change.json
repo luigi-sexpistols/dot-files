@@ -22,7 +22,8 @@
       ],
       "override": {
         "between_the_buried_and_me": {
-          "colors_ii": ["wal"]
+          "colors_ii": ["wal"],
+          "the_blue_nowhere": ["wal"]
         },
         "blood_incantation": {
           "absolute_elsewhere": ["wal"],
@@ -37,7 +38,8 @@
           "petrodragonic_apocalypse_or_dawn_of_eternal_night_an_annihilation_of_planet_earth_and_the_beginning_of_merciless_damnation": ["colorz","wal"]
         },
         "leprous": {
-          "pitfalls": ["colorthief"]
+          "pitfalls": ["colorthief"],
+          "aphelion": ["colorthief"]
         },
         "mastodon": {
           "crack_the_skye": ["wal"]

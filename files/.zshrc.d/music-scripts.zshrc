@@ -51,15 +51,15 @@ wal-backend () {
         album="$(current-album)"
 
         if [ -z "$artist" ] || [ -z "$album" ]; then
-            echo "No song is currently playing, aborting regeneration."
+            echo "No song is currently playing, aborting regeneration." >&2
             return 0
         fi
 
         if [ -n "$backend" ]; then
-            echo "Backend specified: '$backend'."
+            echo "Backend specified: '$backend'." >&2
         else
             backend="$(cat "$status_file" | grep -Eo '^BACKEND=.+$' | cut -d '=' -f 2-)"
-            echo "Backend from status: '$backend'."
+            echo "Backend from status: '$backend'." >&2
         fi
 
         echo "Saving pending backend '$backend' for $artist - $album"

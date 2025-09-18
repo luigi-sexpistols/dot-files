@@ -72,26 +72,31 @@ get-backend-pref () {
   local album_slug="$(slugify "$ALBUM")"
   local artist_slug="$(slugify "$ALBUMARTIST")"
   local value
-  local backends=()
+  local backends
 
-  value="$(get-pref ".backend.override.${artist_slug}.${album_slug}")"
-  x-log "Value: $value"
-
-  if [[ "$value" == 'null' ]]; then
-    # no override, use global preference
-    backends=("$(get-pref '.backend.default' | jq -r '.[]')")
-  elif [[ "$value" =~ ^\".*\"$ ]]; then
-    # is string
-    backends+=("$(echo "$value" | jq -r '.')")
-  elif [[ "$value" =~ ^\[.*\]$ ]]; then
-    # is array
-    readarray -t backends <<< "$(echo "$value" | jq -r '.[]')"
+  if [ -n "$WAL_BACKEND" ]; then
+    x-log "WAL_BACKEND is set to '$WAL_BACKEND', using that as the only backend."
+    backends="$WAL_BACKEND"
   else
-    x-log "Invalid backend preference format for '$artist_slug/$album_slug', expected string or array, got: '$value'" ERROR
-    return $LINENO
+    value="$(get-pref ".backend.override.${artist_slug}.${album_slug}")"
+    x-log "Value: $value"
+
+    if [[ "$value" == 'null' ]]; then
+      # no override, use global preference
+      backends="$(get-pref '.backend.default' | jq -r '.[]')"
+    elif [[ "$value" =~ ^\".*\"$ ]]; then
+      # is string
+      backends="$(echo "$value" | jq -r '.')"
+    elif [[ "$value" =~ ^\[.*\]$ ]]; then
+      # is array
+      backends="$(echo "$value" | jq -r '.[]')"
+    else
+      x-log "Invalid backend preference format for '$artist_slug/$album_slug', expected string or array, got: '$value'" ERROR
+      return $LINENO
+    fi
   fi
 
-  echo "${backends[@]}"
+  echo "$backends"
 }
 
 get-backend-strategy-pref () {
@@ -99,9 +104,13 @@ get-backend-strategy-pref () {
 }
 
 get-backend () {
-  case "$(get-backend-strategy-pref)" in
+  local strategy="$(get-backend-strategy-pref)"
+  local length
+
+  case "$strategy"  in
     'random')
-      echo "${backends[RANDOM % ${#backends[@]}]}"
+      length="${#backends[@]}"
+      echo "${backends[RANDOM % length]}"
       ;;
     'first')
       echo "${backends[0]}"
@@ -133,14 +142,7 @@ generate-scheme () {
   local new_backends
   local backend
 
-  echo "WAL_BACKEND = '$WAL_BACKEND'"
-
-  if [ -n "$WAL_BACKEND" ]; then
-    x-log "WAL_BACKEND is set to '$WAL_BACKEND', using that as the only backend."
-    backends=("$WAL_BACKEND")
-  else
-    backends=($(get-backend-pref))
-  fi
+  readarray -t backends <<< "$(get-backend-pref)"
 
   x-log "Got backend preference: '$(echo "${backends[@]}")'."
 

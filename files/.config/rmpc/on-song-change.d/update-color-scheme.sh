@@ -185,8 +185,10 @@ generate-scheme () {
     wal_output="$(wal -ne$mode -i "$art_file" --backend="$b")"
     wal_code=$?
 
-    x-log "Wal exit code: $wal_code"
-    x-log "Wal output: $wal_output"
+    x-log "$(
+      echo "wal (${wal_code}):"
+      echo "$wal_output"
+    )"
 
     if [ $wal_code -eq 0 ]; then
       global_used_backend="$b"

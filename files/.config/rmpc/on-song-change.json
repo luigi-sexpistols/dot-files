@@ -14,16 +14,14 @@
       "strategy": "random",
       "default": [
         "wal",
-        "colorz"
-      ],
-      "others": [
+        "colorz",
         "haishoku",
         "colorthief"
       ],
       "override": {
         "between_the_buried_and_me": {
           "coma_ecliptic": ["colorthief"],
-	      "colors_ii": ["wal"],
+          "colors_ii": ["wal"],
           "the_blue_nowhere": ["wal"]
         },
         "blood_incantation": {
@@ -56,9 +54,13 @@
         },
         "wayfarer": {
           "american_gothic": ["wal"]
+        },
+        "witch_ripper": {
+          "the_flight_after_the_fall": ["colorz", "haishoku"]
         }
       },
       "override_pending": {
+
       }
     }
   }

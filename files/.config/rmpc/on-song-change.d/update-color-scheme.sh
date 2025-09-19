@@ -181,10 +181,13 @@ generate-scheme () {
 
     x-log "Trying color scheme update with backend '$b'."
 
+    # `wal` must be run with the `-e` flag to ensure it doesn't interfere with rmpc
     wal_output="$(wal -ne$mode -i "$art_file" --backend="$b")"
     wal_code=$?
 
-    # `wal` must be run with the `-e` flag to ensure it doesn't interfere with rmpc
+    x-log "Wal exit code: $wal_code"
+    x-log "Wal output: $wal_output"
+
     if [ $wal_code -eq 0 ]; then
       global_used_backend="$b"
       x-log "Color scheme updated."

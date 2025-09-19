@@ -22,7 +22,8 @@
       ],
       "override": {
         "between_the_buried_and_me": {
-          "colors_ii": ["wal"],
+          "coma_ecliptic": ["colorthief"],
+	      "colors_ii": ["wal"],
           "the_blue_nowhere": ["wal"]
         },
         "blood_incantation": {
@@ -52,9 +53,13 @@
         },
         "tesseract": {
           "altered_state": ["wal"]
+        },
+        "wayfarer": {
+          "american_gothic": ["wal"]
         }
       },
-      "override_pending": {}
+      "override_pending": {
+      }
     }
   }
 }

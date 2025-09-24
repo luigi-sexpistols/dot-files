@@ -10,6 +10,36 @@ current-album () {
     mpc status -f "%album%" | head -n 1
 }
 
+dump-music-metadata () {
+    cd ~/Music
+
+    local track file artist album year genres
+
+    get-tag () {
+      local tag="$1"
+      local file="$2"
+
+      metaflac --show-tag="$tag" "$file" | sed -E "s/^${tag}=//"
+    }
+
+    for artist_dir in *; do
+      for album_dir in "$artist_dir"/*; do
+        track="$(find "$album_dir" -type f -name '*.flac' -print -quit | sed "s|^$album_dir||")"
+        file="$(realpath "$album_dir"/"$track")"
+
+        [ -z "$track" ] && echo "Failed to find track in ${album_dir}" >&2 && continue
+        [ ! -f "$file" ] && echo "File '$file' does not exist!" >&2 && continue
+
+        artist="$(get-tag ALBUMARTIST "$file")"
+        album="$(get-tag ALBUM "$file")"
+        year="$(get-tag DATE "$file")"
+        genres="$(get-tag GENRE "$file" | tr '\n' ';' | sed 's/;*\s*$//')"
+
+        echo "$artist|$album|$year|$genres"
+      done
+    done
+}
+
 wal-backend () {
     local status_file="$HOME"/.cache/rmpc/current_album
     local prefs_file="$HOME"/.config/rmpc/on-song-change.json

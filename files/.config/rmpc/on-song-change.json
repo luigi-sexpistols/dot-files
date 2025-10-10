@@ -22,22 +22,37 @@
         "colorthief"
       ],
       "override": {
+        "bakahira": {
+          "we_are_the_future": ["colorz","colorthief"]
+        },
         "between_the_buried_and_me": {
           "coma_ecliptic": ["colorthief"],
           "colors_ii": ["wal"],
           "the_blue_nowhere": ["wal"]
         },
+        "bexta": {
+          "mixology_7": ["colorthief","colorz","wal"]
+        },
         "blood_incantation": {
           "absolute_elsewhere": ["wal"],
           "luminescent_bridge_ep": ["colorz"]
+        },
+        "cog": {
+          "sharing_space": ["colorthief","colorz","haishoku"]
         },
         "devin_townsend": {
           "z2_dark_matters": ["wal"],
           "z2_sky_blue": ["wal"]
         },
+        "gnome": {
+          "vestiges_of_verumex_visidrome": ["wal"]
+        },
+        "insane_clown_posse": {
+          "the_great_milenko": ["colorthief","wal"]
+        },
         "king_gizzard_and_the_lizard_wizard": {
           "float_along_fill_your_lungs": ["wal"],
-          "nonagon_infinity": ["wal","colorz","haishoku"],
+          "nonagon_infinity": ["wal"],
           "omnium_gatherum": ["colorz","wal"],
           "petrodragonic_apocalypse_or_dawn_of_eternal_night_an_annihilation_of_planet_earth_and_the_beginning_of_merciless_damnation": ["colorz","wal"]
         },
@@ -54,11 +69,20 @@
         "rivers_of_nihil": {
           "where_owls_know_my_name": ["wal"]
         },
+	"steve_roach": {
+	  "portals_and_spirals": ["colorz"]
+	},
+        "shpongle": {
+          "museum_of_consciousness": ["colorthief","colorz","wal"]
+        },
         "tesseract": {
           "altered_state": ["wal"]
         },
         "wayfarer": {
           "american_gothic": ["wal"]
+        },
+        "white_ward": {
+          "false_light": ["colorthief","haishoku","wal"]
         },
         "witch_ripper": {
           "the_flight_after_the_fall": ["colorz","haishoku"]

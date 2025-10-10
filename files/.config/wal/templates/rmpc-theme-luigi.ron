@@ -9,6 +9,7 @@
     draw_borders: true,
     browser_column_widths: [0, 50, 50],
     text_color: "{foreground}",
+    format_tag_separator: ", ",
     tab_bar: (
         enabled: true,
         active_style: (fg: "{background}", bg: "{color2}", modifiers: ""),

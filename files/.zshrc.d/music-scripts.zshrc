@@ -132,3 +132,24 @@ wal-backend () {
 
     entrypoint "$@"
 }
+
+dac-refresh () {
+    echo -n "Restarting PulseAudio..."
+    pulseaudio --kill
+    until ! pgrep pulseaudio > /dev/null 2>&1; do; sleep 0.1; done
+    pulseaudio --start
+    until pgrep pulseaudio > /dev/null 2>&1; do; sleep 0.1; done
+    echo " done"
+
+    echo -n "Restarting PipeWire..."
+    systemctl --user restart pipewire.service
+    echo " done"
+
+    echo -n "Toggling music..."
+    mpc pause --wait > /dev/null 2>&1
+    mpc play > /dev/null 2>&1
+    echo " done"
+
+    echo
+    echo "Enjoy the tunes! :D"
+}

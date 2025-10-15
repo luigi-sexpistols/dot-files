@@ -10,6 +10,10 @@ current-album () {
     mpc status -f "%album%" | head -n 1
 }
 
+current-title () {
+    mpc status -f "%title%" | head -n 1
+}
+
 dump-music-metadata () {
     cd ~/Music
 
@@ -92,18 +96,17 @@ wal-backend () {
             echo "Backend from status: '$backend'." >&2
         fi
 
-        echo "Saving pending backend '$backend' for $artist - $album"
-
         cat "$prefs_file" \
         | jq \
             --arg artist "$(slugify "$artist")" \
             --arg album "$(slugify "$album")" \
             --arg backend "$backend" \
-            '.update_color_scheme.backend.override_pending[$artist][$album] += [$backend] | .update_color_scheme.backend.override_pending[$artist][$album] |= unique' \
+            '.update_color_scheme.backend.override[$artist][$album] += [$backend] | .update_color_scheme.backend.override[$artist][$album] |= unique' \
         | jq -MRsr 'gsub("\n            +";"")|gsub("\n          ]";"]")' \
         > "$temp_file"
 
         mv "$temp_file" "$prefs_file"
+        echo "Saved backend '$backend' for $artist - $album"
     }
 
     p-current () {
@@ -133,12 +136,88 @@ wal-backend () {
     entrypoint "$@"
 }
 
+lyric-search () {
+    entrypoint () {
+        local now_playing="false"
+        local exact="true"
+        local artist title
+        local results results_table found
+
+        eval set -- "$(getopt --long='now-playing,q-query,artist:,title:' --name "$0" -- '' "$@")"
+
+        while true; do
+            case "$1" in
+                --now-playing) now_playing="true"; shift 2 ;;
+                --q-query) exact="false"; shift 2 ;;
+                --artist) artist="$2"; shift 2 ;;
+                --title) title="$2"; shift 2 ;;
+                --) shift; break ;;
+                *) break ;;
+            esac
+        done
+
+        if [ "$now_playing" = "true" ]; then
+            [ -n "$artist" ] && echo "Do not provide --artist when --now-playing is set." >&2 && return 1
+            [ -n "$title" ] && echo "Do not provide --title when --now-playing is set." >&2 && return 1
+
+            artist="$(current-artist)"
+            title="$(current-title)"
+
+            echo "Searching for '${artist}' - '${title}' from current playing song..."
+        else
+            [ -z "$artist" ] && echo "You must provide --artist when not using --now-playing." >&2 && return 1
+            [ -z "$title" ] && echo "You must provide --title when not using --now-playing." >&2 && return 1
+        fi
+
+        if [ "$exact" = "false" ]; then
+            results="$(
+                curl -X GET -sG \
+                    -H "Lrclib-Client: rmpc-$(rmpc version | cut -d' ' -f2)" \
+                    --data-urlencode "q=${artist} ${title}" \
+                    'https://lrclib.net/api/search'
+            )"
+        else
+            results="$(
+                curl -X GET -sG \
+                    -H "Lrclib-Client: rmpc-$(rmpc version | cut -d' ' -f2)" \
+                    --data-urlencode "artist_name=${artist}" \
+                    --data-urlencode "track_name=${title}" \
+                    'https://lrclib.net/api/search'
+            )"
+        fi
+
+        # clean out control characters that break jq and generally clean up the list
+        results="$(
+            echo "$results" \
+            | tr -d '\000-\037' \
+            | jq '.[] | select(.syncedLyrics != "" and .syncedLyrics != null)' \
+            | jq -s '.'
+        )"
+
+#         echo "$results"
+
+        found="$(echo "$results" | jq length)"
+
+        if [ "$found" -gt 0 ]; then
+            {
+                echo 'ID|Artist|Album|Title'
+                echo '--|------|-----|-----'
+                echo "$results" | jq -c '.[] | select(.syncedLyrics) | {id,artistName,albumName,trackName}' | while read -r item; do
+                  echo "$item" | jq -r 'join("|")'
+                done
+            } | column -t -s'|'
+        else
+            echo 'No results found with `.syncedLyrics`...' >&2
+        fi
+    }
+
+    entrypoint "$@"
+}
+
 dac-refresh () {
-    echo -n "Restarting PulseAudio..."
+    echo -n "Restarting PulseAudio... "
     pulseaudio --kill
-    until ! pgrep pulseaudio > /dev/null 2>&1; do; sleep 0.1; done
     pulseaudio --start
-    until pgrep pulseaudio > /dev/null 2>&1; do; sleep 0.1; done
     echo " done"
 
     echo -n "Restarting PipeWire..."

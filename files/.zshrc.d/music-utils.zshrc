@@ -81,7 +81,7 @@ wal-backend () {
         local media_info artist album
         local backend="$1"
 
-        artist="$(current-artist)"
+        artist="$(current-album-artist)"
         album="$(current-album)"
 
         if [ -z "$artist" ] || [ -z "$album" ]; then

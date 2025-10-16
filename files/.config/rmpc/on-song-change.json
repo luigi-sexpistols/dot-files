@@ -1,12 +1,45 @@
 {
   "lyrics": {
     "override": {
+      "description": [
+        "Sometimes lrclib.net doesn't have lyrics under the expected artist/album/track names.",
+        "Use this section to override them for lyric search.",
+        "You can also specify a track by its LRCLIB ID (if known)."
+      ],
+      "example_artist": {
+        "example_album": {
+          "artist": "Example Artist for all tracks",
+          "album": "Example Album for all tracks",
+          "1": {"artist": "Different Artist for this track","title": "Track Title"
+          },
+          "2": {"title": "Another Track Title"
+          }
+        }
+      },
+      "devin_townsend": {
+        "z2_sky_blue": {
+          "11": {"id": "13550044"
+          }
+        }
+      },
       "king_gizzard_and_the_lizard_wizard": {
         "polygondwanaland": {
           "artist": "King Gizzard and the Lizard Wizard"
         },
         "petrodragonic_apocalypse_or_dawn_of_eternal_night_an_annihilation_of_planet_earth_and_the_beginning_of_merciless_damnation": {
           "album": "PetroDragonic Apocalypse"
+        }
+      },
+      "mastodon": {
+        "crack_the_skye": {
+          "5": {"title": "Ghostof Karelia"
+          }
+        }
+      },
+      "pennywise": {
+        "straight_ahead": {
+          "1": {"id": "9829941"
+          }
         }
       }
     }
@@ -37,6 +70,12 @@
           "absolute_elsewhere": ["wal"],
           "luminescent_bridge_ep": ["colorz"]
         },
+        "caligula_s_horse": {
+          "moments_from_ephemeral_city": ["colorthief","colorz","ha","haishoku"]
+        },
+        "castle_rat": {
+          "the_bestiary": ["haishoku"]
+        },
         "cog": {
           "sharing_space": ["colorthief","colorz","haishoku"]
         },
@@ -47,11 +86,15 @@
         "gnome": {
           "vestiges_of_verumex_visidrome": ["wal"]
         },
+        "gorillaz": {
+          "gorillaz": ["wal"]
+        },
         "insane_clown_posse": {
-          "the_great_milenko": ["colorthief","wal"]
+          "the_great_milenko": ["colorthief"]
         },
         "king_gizzard_and_the_lizard_wizard": {
           "float_along_fill_your_lungs": ["wal"],
+          "live_on_kexp": ["colorz"],
           "nonagon_infinity": ["wal"],
           "omnium_gatherum": ["colorz","wal"],
           "petrodragonic_apocalypse_or_dawn_of_eternal_night_an_annihilation_of_planet_earth_and_the_beginning_of_merciless_damnation": ["colorz","wal"]
@@ -66,17 +109,23 @@
         "opeth": {
           "ghost_reveries": ["colorz"]
         },
+        "pennywise": {
+          "straight_ahead": ["haishoku","wal"]
+        },
         "rivers_of_nihil": {
           "where_owls_know_my_name": ["wal"]
         },
-	"steve_roach": {
-	  "portals_and_spirals": ["colorz"]
-	},
+        "steve_roach": {
+          "portals_and_spirals": ["colorz"]
+        },
         "shpongle": {
           "museum_of_consciousness": ["colorthief","colorz","wal"]
         },
         "tesseract": {
           "altered_state": ["wal"]
+        },
+        "various_artists": {
+          "digital_psychedelia_intripped": ["haishoku"]
         },
         "wayfarer": {
           "american_gothic": ["wal"]
@@ -87,8 +136,6 @@
         "witch_ripper": {
           "the_flight_after_the_fall": ["colorz","haishoku"]
         }
-      },
-      "override_pending": {
       }
     }
   }

@@ -1,0 +1,18 @@
+[Unit]
+Description=Music Library Backup Service
+Wants=network.target
+After=network.target
+StartLimitIntervalSec=30
+StartLimitBurst=3
+
+[Service]
+Type=forking
+Restart=on-failure
+RemainAfterExit=true
+ExecStart=/usr/bin/aws s3 sync /home/ashley/Music s3://richmond-music-library --storage-class INTELLIGENT_TIERING
+Environment=AWS_PROFILE=photo-library
+Environment=AWS_REGION=ap-southeast-2
+Environment=AWS_SHARED_CREDENTIALS_FILE=/home/ashley/.aws/credentials
+SuccessExitStatus=0
+User=ashley
+Group=ashley

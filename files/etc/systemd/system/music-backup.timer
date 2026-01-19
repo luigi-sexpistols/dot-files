@@ -1,0 +1,8 @@
+[Unit]
+Description=Daily backup of music library.
+
+[Timer]
+OnCalendar=*-*-* 01:35:00
+
+[Install]
+WantedBy=timers.target

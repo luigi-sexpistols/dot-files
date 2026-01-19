@@ -10,23 +10,48 @@
         "example_album": {
           "artist": "Example Artist for all tracks",
           "album": "Example Album for all tracks",
-          "1": {"artist": "Different Artist for this track","title": "Track Title"
+          "1": {
+            "artist": "Different Artist for this track",
+            "title": "Track Title"
           },
-          "2": {"title": "Another Track Title"
+          "2": {
+            "title": "Another Track Title"
           }
+        }
+      },
+      "blood_incantation": {
+        "luminescent_bridge_ep": {
+          "album": "Luminescent Bridge"
         }
       },
       "devin_townsend": {
         "z2_sky_blue": {
-          "11": {"id": "13550044"
+          "11": {
+            "id": "13550044"
           }
+        }
+      },
+      "fleshgod_apocalypse": {
+        "king": {
+          "album": "King (Limited Edition)"
         }
       },
       "king_gizzard_and_the_lizard_wizard": {
         "infest_the_rats_nest": {
-          "5": {"id": "2351"},
-          "7": {"id": "2354"},
-          "9": {"id": "1914"}
+          "5": {
+            "id": "2351"
+          },
+          "7": {
+            "id": "2354"
+          },
+          "9": {
+            "id": "1914"
+          }
+        },
+        "nonagon_infinity": {
+          "9": {
+            "id": "893321"
+          }
         },
         "polygondwanaland": {
           "artist": "King Gizzard and the Lizard Wizard"
@@ -37,14 +62,42 @@
       },
       "mastodon": {
         "crack_the_skye": {
-          "5": {"title": "Ghostof Karelia"
+          "5": {
+            "title": "Ghostof Karelia"
+          }
+        }
+      },
+      "opeth": {
+        "ghost_reveries": {
+          "4": {
+            "album": "Ghost Reveries [Limited Edition]"
+          },
+          "6": {
+            "album": "Opeth - Ghost Reveries [2005]"
+          },
+          "8": {
+            "album": "Ghost Reveries [Limited Edition]"
+          }
+        },
+        "blackwater_park": {
+          "2": {
+            "album": "Blackwater Park (20th Anniversary Edition)"
+          },
+          "4": {
+            "album": "Lamentations"
           }
         }
       },
       "pennywise": {
         "straight_ahead": {
-          "1": {"id": "9829941"
+          "1": {
+            "id": "9829941"
           }
+        }
+      },
+      "porcupine_tree": {
+        "fear_of_a_blank_planet": {
+          "album": "Porcupine Tree"
         }
       }
     }
@@ -61,85 +114,260 @@
       ],
       "override": {
         "bakahira": {
-          "we_are_the_future": ["colorz","colorthief"]
+          "we_are_the_future": [
+            "colorz"
+          ]
         },
         "between_the_buried_and_me": {
-          "coma_ecliptic": ["colorthief"],
-          "colors_ii": ["wal"],
-          "the_blue_nowhere": ["wal"]
+          "coma_ecliptic": [
+            "colorthief"
+          ],
+          "colors_ii": [
+            "wal"
+          ],
+          "the_blue_nowhere": [
+            "wal"
+          ]
         },
         "bexta": {
-          "mixology_7": ["colorthief","colorz","wal"]
+          "mixology_7": [
+            "colorthief",
+            "colorz",
+            "wal"
+          ]
         },
         "blood_incantation": {
-          "absolute_elsewhere": ["wal"],
-          "luminescent_bridge_ep": ["colorz"]
+          "absolute_elsewhere": [
+            "wal"
+          ],
+          "luminescent_bridge_ep": [
+            "colorz"
+          ]
         },
         "caligula_s_horse": {
-          "moments_from_ephemeral_city": ["colorthief","colorz","ha","haishoku"]
+          "moments_from_ephemeral_city": [
+            "colorthief",
+            "colorz",
+            "haishoku"
+          ]
         },
         "castle_rat": {
-          "the_bestiary": ["haishoku"]
+          "the_bestiary": [
+            "haishoku"
+          ]
         },
         "cog": {
-          "sharing_space": ["colorthief","colorz","haishoku"]
+          "sharing_space": [
+            "colorthief",
+            "colorz",
+            "haishoku"
+          ]
         },
         "devin_townsend": {
-          "z2_dark_matters": ["wal"],
-          "z2_sky_blue": ["wal"]
+          "z2_dark_matters": [
+            "wal"
+          ],
+          "z2_sky_blue": [
+            "wal"
+          ]
         },
         "gnome": {
-          "vestiges_of_verumex_visidrome": ["wal"]
+          "vestiges_of_verumex_visidrome": [
+            "wal"
+          ]
         },
         "gorillaz": {
-          "gorillaz": ["wal"]
+          "gorillaz": [
+            "wal"
+          ]
         },
         "insane_clown_posse": {
-          "the_great_milenko": ["colorthief"]
+          "the_great_milenko": [
+            "colorthief"
+          ]
         },
         "king_gizzard_and_the_lizard_wizard": {
-          "float_along_fill_your_lungs": ["wal"],
-          "live_on_kexp": ["colorz"],
-          "nonagon_infinity": ["wal"],
-          "omnium_gatherum": ["colorz","wal"],
-          "petrodragonic_apocalypse_or_dawn_of_eternal_night_an_annihilation_of_planet_earth_and_the_beginning_of_merciless_damnation": ["colorz","wal"]
+          "float_along_fill_your_lungs": [
+            "wal"
+          ],
+          "live_on_kexp": [
+            "colorz"
+          ],
+          "nonagon_infinity": [
+            "wal"
+          ],
+          "omnium_gatherum": [
+            "colorz",
+            "wal"
+          ],
+          "petrodragonic_apocalypse_or_dawn_of_eternal_night_an_annihilation_of_planet_earth_and_the_beginning_of_merciless_damnation": [
+            "colorz",
+            "wal"
+          ],
+          "k_g": [
+            "haishoku",
+            "wal"
+          ]
         },
         "leprous": {
-          "pitfalls": ["colorthief"],
-          "aphelion": ["colorthief"]
+          "pitfalls": [
+            "colorthief"
+          ],
+          "aphelion": [
+            "colorthief"
+          ]
         },
         "mastodon": {
-          "crack_the_skye": ["wal"]
+          "crack_the_skye": [
+            "wal"
+          ]
         },
         "opeth": {
-          "ghost_reveries": ["colorz"]
+          "ghost_reveries": [
+            "colorz"
+          ]
         },
         "pennywise": {
-          "straight_ahead": ["haishoku","wal"]
+          "straight_ahead": [
+            "haishoku",
+            "wal"
+          ]
         },
         "rivers_of_nihil": {
-          "where_owls_know_my_name": ["wal"]
+          "where_owls_know_my_name": [
+            "wal"
+          ]
         },
         "steve_roach": {
-          "portals_and_spirals": ["colorz"]
+          "portals_and_spirals": [
+            "colorz"
+          ]
         },
         "shpongle": {
-          "museum_of_consciousness": ["colorthief","colorz","wal"]
+          "museum_of_consciousness": [
+            "colorthief",
+            "colorz",
+            "wal"
+          ]
         },
         "tesseract": {
-          "altered_state": ["wal"]
+          "altered_state": [
+            "wal"
+          ]
         },
         "various_artists": {
-          "digital_psychedelia_intripped": ["haishoku"]
+          "digital_psychedelia_intripped": [
+            "haishoku"
+          ]
         },
         "wayfarer": {
-          "american_gothic": ["wal"]
+          "american_gothic": [
+            "wal"
+          ]
         },
         "white_ward": {
-          "false_light": ["colorthief","haishoku","wal"]
+          "false_light": [
+            "colorthief",
+            "haishoku",
+            "wal"
+          ]
         },
         "witch_ripper": {
-          "the_flight_after_the_fall": ["colorz","haishoku"]
+          "the_flight_after_the_fall": [
+            "colorz",
+            "haishoku"
+          ]
+        },
+        "sungazer": {
+          "sungazer_vol_ii_ep": [
+            "haishoku"
+          ]
+        },
+        "bad_salad": {
+          "puzzled": [
+            "colorz",
+            "wal"
+          ]
+        },
+        "rammstein": {
+          "mutter": [
+            "haishoku",
+            "wal"
+          ]
+        },
+        "the_cat_empire": {
+          "two_shoes": [
+            "colorz",
+            "haishoku"
+          ]
+        },
+        "world_of_wandag": {
+          "huniepop_soundtrack": [
+            "colorz",
+            "haishoku"
+          ]
+        },
+        "myrone": {
+          "drift_stage_vol_1": [
+            "colorthief"
+          ]
+        },
+        "draconian": {
+          "under_a_godless_veil": [
+            "colorthief",
+            "haishoku",
+            "wal"
+          ]
+        },
+        "kpop_demon_hunters": {
+          "kpop_demon_hunters_soundtrack": [
+            "colorthief"
+          ]
+        },
+        "fleshgod_apocalypse": {
+          "king": [
+            "colorthief",
+            "haishoku",
+            "wal"
+          ]
+        },
+        "enzso": {
+          "enzso": [
+            "haishoku"
+          ]
+        },
+        "aqua": {
+          "aquarium": [
+            "haishoku",
+            "wal"
+          ]
+        },
+        "themba": {
+          "elements_of_africa": [
+            "colorthief",
+            "haishoku"
+          ]
+        },
+        "thomas_ross_fitzsimons": {
+          "planets_vol_1": [
+            "haishoku"
+          ]
+        },
+        "porcupine_tree": {
+          "fear_of_a_blank_planet": [
+            "wal"
+          ]
+        },
+        "gaupa": {
+          "gaupa_ep": [
+            "haishoku"
+          ]
+        },
+        "slomosa": {
+          "tundra_rock": [
+            "colorthief",
+            "wal"
+          ]
         }
       }
     }

@@ -30,21 +30,38 @@ if [ "$HAS_LRC" = "false" ]; then
   prefs_album="$(slugify "$ALBUM")"
 
   overrides="$(get-override-pref ".[\"$prefs_artist\"][\"$prefs_album\"]")"
-  artist_override="$(echo "$overrides" | jq -r ".artist // \"$ALBUMARTIST\"")"
-  album_override="$(echo "$overrides" | jq -r ".album // \"$ALBUM\"")"
 
+  id_override="$(echo "$overrides" | jq -r ".[\"$TRACK\"].id // empty")"
+  artist_override="$(echo "$overrides" | jq -r ".[\"$TRACK\"].artist // .artist // \"$ALBUMARTIST\"")"
+  album_override="$(echo "$overrides" | jq -r ".[\"$TRACK\"].album // .album // \"$ALBUM\"")"
+  title_override="$(echo "$overrides" | jq -r ".[\"$TRACK\"].title // \"$TITLE\"")"
+
+  echo "Track number: $TRACK" >&2
   echo "Overrides: $overrides" >&2
-  echo "Artist override: $artist_override" >&2
-  echo "Album override: $album_override" >&2
+  echo "Search values:" >&2
 
-  synced_lyrics="$(
-    curl -X GET -sG \
-      -H "Lrclib-Client: rmpc-$VERSION" \
-      --data-urlencode "artist_name=$artist_override" \
-      --data-urlencode "album_name=$album_override" \
-      --data-urlencode "track_name=$TITLE" \
-      "https://lrclib.net/api/get" | jq -r '.syncedLyrics'
-  )"
+  if [ -n "$id_override" ]; then
+    echo "ID: $id_override" >&2
+
+    synced_lyrics="$(
+      curl -X GET -sG \
+        -H "Lrclib-Client: rmpc-$VERSION" \
+        "https://lrclib.net/api/get/${id_override}" | jq -r '.syncedLyrics'
+    )"
+  else
+    echo "Artist: $artist_override" >&2
+    echo "Album: $album_override" >&2
+    echo "Title: $title_override" >&2
+
+    synced_lyrics="$(
+      curl -X GET -sG \
+        -H "Lrclib-Client: rmpc-$VERSION" \
+        --data-urlencode "artist_name=$artist_override" \
+        --data-urlencode "album_name=$album_override" \
+        --data-urlencode "track_name=${title_override}" \
+        "https://lrclib.net/api/get" | jq -r '.syncedLyrics'
+    )"
+  fi
 
   if [ -z "$synced_lyrics" ]; then
       [ -n "$PID" ] && rmpc remote --pid "$PID" status "Failed to download lyrics for $ALBUMARTIST - $TITLE" --level error

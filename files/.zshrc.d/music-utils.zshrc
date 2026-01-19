@@ -232,3 +232,64 @@ dac-refresh () {
     echo
     echo "Enjoy the tunes! :D"
 }
+
+play-cd () {
+    track="$1"
+
+    track_count="$(cdparanoia -sQ |& grep -P '^\s+\d+\.' | wc -l)"
+
+    if [ -n "$track" ]; then
+        if ! [[ "$track" =~ ^[0-9]+$ ]]; then
+            echo "Track must be a number!" >&2
+            return 1
+        fi
+
+        if [ "$track" -lt 1 ] || [ "$track" -gt "$track_count" ]; then
+            echo "Track number must be between 1 and $track_count!" >&2
+            return 1
+        fi
+    fi
+
+    add-to-queue () {
+        mpc add cdda:///"$1"
+    }
+
+    if [ -n "$track" ]; then
+        add-to-queue "$track"
+    else
+        for n in {1..$track_count}; do add-to-queue "$n"; done
+    fi
+}
+
+list-music-library () {
+    (
+        colw=50
+        w=$((colw - 1))
+
+        # todo - flac or mp3 or ogg - maybe `01*` instead?`
+        for n in ~/Music/*/*/01*.flac; do
+            artist="$(metaflac --show-tag=ALBUMARTIST "$n" | sed 's/^ALBUMARTIST=//')"
+            album="$(metaflac --show-tag=ALBUM "$n" | sed 's/^ALBUM=//')"
+            year="$(metaflac --show-tag=DATE "$n" | sed 's/^DATE=//')"
+            format="$(file "$n" | grep -Eo '[0-9]+ bit, stereo, [0-9\.]+ kHz' | sed 's/, stereo, /,/')"
+            bit_depth="$(echo "$format" | cut -d',' -f1 | cut -d' ' -f1)"
+            frequency="$(echo "$format" | cut -d',' -f2 | cut -d' ' -f1)"
+            format="flac"
+
+            # todo - add all formats in album to array and join in output
+
+            o_artist="$artist"
+            o_album="$album"
+
+            if [ "${#artist}" -gt $colw ]; then
+                o_artist="${o_artist:0:$w}…"
+            fi
+            
+            if [ "${#album}" -gt $colw ]; then
+                o_album="${o_album:0:$w}…"
+            fi
+
+            echo "$o_artist\`$o_album\`$year\`$format\`$bit_depth / $frequency"
+        done
+    ) | column -t -s'`'
+}

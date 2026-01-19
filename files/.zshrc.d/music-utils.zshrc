@@ -102,7 +102,7 @@ wal-backend () {
             --arg album "$(slugify "$album")" \
             --arg backend "$backend" \
             '.update_color_scheme.backend.override[$artist][$album] += [$backend] | .update_color_scheme.backend.override[$artist][$album] |= unique' \
-        | jq -MRsr 'gsub("\n            +";"")|gsub("\n          ]";"]")' \
+#        | jq -MRsr 'gsub("\n            +";"")|gsub("\n          ]";"]")' \
         > "$temp_file"
 
         mv "$temp_file" "$prefs_file"

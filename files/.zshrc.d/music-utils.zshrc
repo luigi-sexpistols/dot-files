@@ -71,8 +71,8 @@ wal-backend () {
             export ALBUM="$album"
             export WAL_BACKEND="$backend"
 
-           p-reset-status
-            ~/.config/rmpc/on-song-change.d/update-color-scheme.sh
+            p-reset-status
+            bash -c "$HOME"/.config/rmpc/on-song-change.d/update-color-scheme.sh
         )
     }
 

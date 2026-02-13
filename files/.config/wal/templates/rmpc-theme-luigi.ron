@@ -44,7 +44,7 @@
                 style: (fg: "{color2}"),
                 default: (kind: Text("Unknown Artist"), style: (fg: "{color12}"))
             ),
-            width: "22%"
+            width: "25"
         ),
         (
             prop: (
@@ -60,7 +60,7 @@
                 style: (fg: "{color2}"),
                 default: (kind: Text("Unknown Album"), style: (fg: "{color12}"))
             ),
-            width: "22%",
+            width: "30",
         ),
         (
             prop: (
@@ -71,7 +71,7 @@
                     style: (fg: "{color12}")
                 )
             ),
-            width: "10",
+            width: "8",
             alignment: Right
         )
     ],

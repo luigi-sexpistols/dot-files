@@ -36,6 +36,11 @@
           "album": "King (Limited Edition)"
         }
       },
+      "haken": {
+        "affinity": {
+          "album": "Affinity (deluxe edition)"
+        }
+      },
       "king_gizzard_and_the_lizard_wizard": {
         "infest_the_rats_nest": {
           "5": {
@@ -98,6 +103,18 @@
       "porcupine_tree": {
         "fear_of_a_blank_planet": {
           "album": "Porcupine Tree"
+        }
+      },
+      "tesseract": {
+        "polaris": {
+          "album": "Polaris / Errai",
+          "8": {
+            "title": "Cages - P O R T A L S",
+            "album": "PORTALS"
+          },
+          "9": {
+            "album": "Portals"
+          }
         }
       }
     }
@@ -368,9 +385,40 @@
             "colorthief",
             "wal"
           ]
+        },
+        "the_living_end": {
+          "the_living_end": [
+            "colorthief",
+            "haishoku",
+            "wal"
+          ]
+        },
+        "metallica": {
+          "death_magnetic": [
+            "colorthief",
+            "haishoku",
+            "wal"
+          ]
+        },
+        "sleep_token": {
+          "take_me_back_to_eden": [
+            "colorthief",
+            "haishoku",
+            "wal"
+          ]
+        },
+        "angine_de_poitrine": {
+          "vol_1": [
+            "colorz"
+          ]
+        },
+        "leopard_spotters": {
+          "biodiversity": [
+            "colorz",
+            "wal"
+          ]
         }
       }
     }
   }
 }
-

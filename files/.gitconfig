@@ -10,7 +10,7 @@ gpgsign = true
 program = /usr/bin/gpg
 
 [core]
-autocrlf = false
+	autocrlf = false
 editor = vim
 
 [pull]

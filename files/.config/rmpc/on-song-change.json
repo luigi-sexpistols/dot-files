@@ -31,6 +31,13 @@
           }
         }
       },
+      "dimmu_borgir": {
+        "eonian": {
+          "2": {
+            "id": "14291535"
+          }
+        }
+      },
       "fleshgod_apocalypse": {
         "king": {
           "album": "King (Limited Edition)"
@@ -70,6 +77,12 @@
           "5": {
             "title": "Ghostof Karelia"
           }
+        }
+      },
+      "mcbaise": {
+        "raviolo_ep": {
+          "album": "Raviolo",
+          "artist": "McBaise"
         }
       },
       "opeth": {
@@ -114,6 +127,23 @@
           },
           "9": {
             "album": "Portals"
+          }
+        }
+      },
+      "voyager": {
+        "fearless_in_love": {
+          "6": {
+            "album": "Prince of Fire"
+          },
+          "11": {
+            "title": "Gren (Fearless in Love)"
+          }
+        }
+      },
+      "wayfarer": {
+        "american_gothic": {
+          "8": {
+            "album": "A High Plains Eulogy"
           }
         }
       }
@@ -415,6 +445,27 @@
         "leopard_spotters": {
           "biodiversity": [
             "colorz",
+            "wal"
+          ]
+        },
+        "sewell_and_the_gong": {
+          "patron_saint_of_elsewhere": [
+            "wal"
+          ]
+        },
+        "mcbaise": {
+          "raviolo": [
+            "wal"
+          ]
+        },
+        "the_ocean": {
+          "pelagial": [
+            "wal"
+          ]
+        },
+        "haken": {
+          "affinity": [
+            "haishoku",
             "wal"
           ]
         }

@@ -41,6 +41,12 @@
       "haken": {
         "affinity": {
           "album": "Affinity (deluxe edition)"
+        },
+        "the_mountain":  {
+          "2": {"album": "The Mountain (Limited Edition)"},
+          "4": {"album": "The Mountain (Limited Edition)"},
+          "6": {"album": "The Mountain (Limited Edition)"},
+          "11": {"title": "Nobody (Bonus Track)"}
         }
       },
       "king_gizzard_and_the_lizard_wizard": {
@@ -518,6 +524,11 @@
           "shadows_of_the_dying_sun": [
             "colorthief",
             "colorz",
+            "wal"
+          ]
+        },
+        "lucid_planet": {
+          "lucid_planet": [
             "wal"
           ]
         }

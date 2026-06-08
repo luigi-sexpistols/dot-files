@@ -2,7 +2,7 @@
 #![enable(unwrap_newtypes)]
 #![enable(unwrap_variant_newtypes)]
 (
-    address: "/run/user/1000/mpd/socket",
+    address: "/home/ashley/.var/mpd/socket",
     password: None,
     theme: "luigi",
     enable_config_hot_reload: false,
@@ -28,8 +28,8 @@
     keybinds: (
         global: {
             ":":       CommandMode,
-            "-":       VolumeUp,
-            "=":       VolumeDown,
+            "=":       VolumeUp,
+            "-":       VolumeDown,
             "<Tab>":   NextTab,
             "<S-Tab>": PreviousTab,
             "1":       SwitchToTab("Now Playing"),

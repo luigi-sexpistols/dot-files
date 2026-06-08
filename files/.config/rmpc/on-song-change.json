@@ -42,11 +42,27 @@
         "affinity": {
           "album": "Affinity (deluxe edition)"
         },
-        "the_mountain":  {
-          "2": {"album": "The Mountain (Limited Edition)"},
-          "4": {"album": "The Mountain (Limited Edition)"},
-          "6": {"album": "The Mountain (Limited Edition)"},
-          "11": {"title": "Nobody (Bonus Track)"}
+        "the_mountain": {
+          "2": {
+            "album": "The Mountain (Limited Edition)"
+          },
+          "4": {
+            "album": "The Mountain (Limited Edition)"
+          },
+          "6": {
+            "album": "The Mountain (Limited Edition)"
+          },
+          "11": {
+            "title": "Nobody (Bonus Track)"
+          }
+        },
+        "vector": {
+          "4": {
+            "album": "Vector (Deluxe Edition)"
+          },
+          "7": {
+            "album": "A Cell Divides"
+          }
         }
       },
       "king_gizzard_and_the_lizard_wizard": {
@@ -71,6 +87,9 @@
         },
         "petrodragonic_apocalypse_or_dawn_of_eternal_night_an_annihilation_of_planet_earth_and_the_beginning_of_merciless_damnation": {
           "album": "PetroDragonic Apocalypse"
+        },
+        "the_silver_cord": {
+          "artist": "King Gizzard and the Lizard Wizard"
         }
       },
       "kpop_demon_hunters": {
@@ -234,6 +253,11 @@
             "colorthief",
             "colorz",
             "haishoku"
+          ],
+          "in_contact": [
+            "colorthief",
+            "colorz",
+            "haishoku"
           ]
         },
         "castle_rat": {
@@ -336,6 +360,9 @@
         },
         "tesseract": {
           "altered_state": [
+            "wal"
+          ],
+          "sonder": [
             "wal"
           ]
         },
@@ -511,6 +538,10 @@
           "affinity": [
             "haishoku",
             "wal"
+          ],
+          "vector": [
+            "colorz",
+            "wal"
           ]
         },
         "dimmu_borgir": {
@@ -529,6 +560,16 @@
         },
         "lucid_planet": {
           "lucid_planet": [
+            "wal"
+          ]
+        },
+        "hail_spirit_noir": {
+          "oi_magoi": [
+            "haishoku"
+          ]
+        },
+        "lorn": {
+          "vessel": [
             "wal"
           ]
         }

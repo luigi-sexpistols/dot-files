@@ -1,3 +1,5 @@
+alias mpc="/usr/bin/mpc --host=/home/ashley/.var/mpd/socket"
+
 current-artist () {
     mpc status -f "%artist%" | head -n 1
 }

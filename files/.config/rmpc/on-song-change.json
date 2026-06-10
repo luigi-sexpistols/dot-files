@@ -166,6 +166,10 @@
         "phanerozoic_ii_mesozoic_cenozoic": {
           "2": {
             "album": "Jurassic | Cretaceous"
+          },
+          "6": {
+            "title":  "Miocene I Pliocene",
+            "album": "Phanerozoic II: Mesozoic I Cenozoic"
           }
         }
       },
@@ -246,6 +250,10 @@
           ],
           "luminescent_bridge_ep": [
             "colorz"
+          ],
+          "all_gates_open": [
+            "colorz",
+            "wal"
           ]
         },
         "caligula_s_horse": {

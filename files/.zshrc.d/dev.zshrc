@@ -1,4 +1,5 @@
 alias aws="/usr/bin/aws --no-cli-pager"
+alias code="/usr/bin/code --disable-accelerated-video-decode"
 
 # alias terraform-docs to docker
 function terraform-docs () {

@@ -5,13 +5,16 @@ get-override-pref () {
   local value_pref="$1"
 
   if [[ "$value_pref" =~ ^\\. ]]; then
-    x-log "Invalid preference path '$value_pref'; must start with a dot."
+    echo "Invalid preference path '$value_pref'; must start with a dot." >&2
     exit $LINENO
   fi
 
   local json_path="${root_pref}${value_pref}"
 
-  x-log "Retrieving preference at '${json_path}' from '$prefs_file'."
+#  echo "Contents of '$prefs_file':" >&2
+#  cat "$prefs_file" >&2
+
+  echo "Retrieving preference at '${json_path}' from '$prefs_file'." >&2
   cat "$prefs_file" | jq -c "$json_path"
 }
 
@@ -31,6 +34,11 @@ if [ "$HAS_LRC" = "false" ]; then
 
   overrides="$(get-override-pref ".[\"$prefs_artist\"][\"$prefs_album\"]")"
 
+  if [ "$overrides" = "null" ]; then
+    echo "No overrides found for $ALBUMARTIST - $ALBUM" >&2
+    overrides="{}"
+  fi
+
   id_override="$(echo "$overrides" | jq -r ".[\"$TRACK\"].id // empty")"
   artist_override="$(echo "$overrides" | jq -r ".[\"$TRACK\"].artist // .artist // \"$ALBUMARTIST\"")"
   album_override="$(echo "$overrides" | jq -r ".[\"$TRACK\"].album // .album // \"$ALBUM\"")"
@@ -40,27 +48,35 @@ if [ "$HAS_LRC" = "false" ]; then
   echo "Overrides: $overrides" >&2
   echo "Search values:" >&2
 
+  user_agent_header="User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:152.0) Gecko/20100101 Firefox/152.0"
+
   if [ -n "$id_override" ]; then
     echo "ID: $id_override" >&2
 
-    synced_lyrics="$(
-      curl -X GET -sG \
-        -H "Lrclib-Client: rmpc-$VERSION" \
-        "https://lrclib.net/api/get/${id_override}" | jq -r '.syncedLyrics'
-    )"
+    http_response="$(curl -X GET -sG -H "$user_agent_header" "https://lrclib.net/api/get/${id_override}")"
+
+#    echo "Response from lrclib.net/api/get/${id_override}:" >&2
+#    echo "$http_response" >&2
+
+    synced_lyrics="$(echo "$http_response" | jq -r '.syncedLyrics')"
   else
     echo "Artist: $artist_override" >&2
     echo "Album: $album_override" >&2
     echo "Title: $title_override" >&2
 
-    synced_lyrics="$(
+    http_response="$(
       curl -X GET -sG \
-        -H "Lrclib-Client: rmpc-$VERSION" \
+        -H "$user_agent_header" \
         --data-urlencode "artist_name=$artist_override" \
         --data-urlencode "album_name=$album_override" \
         --data-urlencode "track_name=${title_override}" \
-        "https://lrclib.net/api/get" | jq -r '.syncedLyrics'
+        "https://lrclib.net/api/get"
     )"
+
+#    echo "Response from lrclib.net/api/get:" >&2
+#    echo "$http_response" >&2
+
+    synced_lyrics="$(echo "$http_response" | jq -r '.syncedLyrics')"
   fi
 
   if [ -z "$synced_lyrics" ]; then

@@ -200,6 +200,12 @@ generate-scheme () {
   done
 }
 
+load-system-appearance () {
+  # todo - implement to change the system "global style"; probably need to set for each album manually, since it'll be
+  # todo - hard to detect by colour alone which theme to apply.
+  x-log 'Loading system appearance (not yet implemented)'
+}
+
 reload-rmpc () {
   local theme="$(cat "$config_dir"/config.ron | grep 'theme' | grep -Eo '"[^"]+"' | grep -Eo '[^"]+')"
 
@@ -208,17 +214,22 @@ reload-rmpc () {
 }
 
 reload-pywalfox () {
-  pywalfox update > /tmp/rmpc.reload-pywalfox.txt 2>&1
-  x-log "Reloaded Firefox theme"
+  #  pywalfox update > /tmp/rmpc.reload-pywalfox.txt 2>&1
+  #  x-log "Reloaded Firefox theme"
+
+  x-log 'Skipping Firefox theme change (disabled).'
 }
 
+# disabled because the colours look horrible, particularly file list striping... ew
 reload-plasma () {
-  # unset and set the pywal colorscheme to ensure it reloads
-  for scheme in BreathDark Pywal; do
-    plasma-apply-colorscheme "$scheme" > /tmp/rmpc.reload-plasma.txt 2>&1
-  done
+  # # unset and set the pywal colorscheme to ensure it reloads
+  # for scheme in BreathDark Pywal; do
+  #   plasma-apply-colorscheme "$scheme" > /tmp/rmpc.reload-plasma.txt 2>&1
+  # done
+  #
+  # x-log "Reloaded Plasma colorscheme"
 
-  x-log "Reloaded Plasma colorscheme"
+  x-log 'Skipping Plasma colorscheme change (disabled).'
 }
 
 set-previous-album () {
@@ -250,6 +261,7 @@ main () {
   init-prefs
   art_file="$(extract-art-where-missing)"
   generate-scheme "$art_file"
+  load-system-appearance
   set-previous-album
   reload-rmpc
   reload-pywalfox

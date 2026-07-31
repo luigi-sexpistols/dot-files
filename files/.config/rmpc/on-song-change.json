@@ -168,7 +168,7 @@
             "album": "Jurassic | Cretaceous"
           },
           "6": {
-            "title":  "Miocene I Pliocene",
+            "title": "Miocene I Pliocene",
             "album": "Phanerozoic II: Mesozoic I Cenozoic"
           }
         }
@@ -548,7 +548,6 @@
             "wal"
           ],
           "vector": [
-            "colorz",
             "wal"
           ]
         },
@@ -578,6 +577,18 @@
         },
         "lorn": {
           "vessel": [
+            "wal"
+          ]
+        },
+        "elder": {
+          "through_zero": [
+            "colorz",
+            "wal"
+          ]
+        },
+        "black_midi": {
+          "hellfire": [
+            "colorz",
             "wal"
           ]
         }

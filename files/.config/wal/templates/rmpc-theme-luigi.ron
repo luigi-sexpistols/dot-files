@@ -7,7 +7,7 @@
     default_album_art_path: None,
     show_song_table_header: false,
     draw_borders: true,
-    browser_column_widths: [0, 50, 50],
+    browser_column_widths: [25, 25, 25, 25],
     text_color: "{foreground}",
     format_tag_separator: ", ",
     tab_bar: (

@@ -48,7 +48,8 @@ if [ "$HAS_LRC" = "false" ]; then
   echo "Overrides: $overrides" >&2
   echo "Search values:" >&2
 
-  user_agent_header="User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:152.0) Gecko/20100101 Firefox/152.0"
+#  user_agent_header="User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:152.0) Gecko/20100101 Firefox/152.0"
+  user_agent_header="Lrclib-Client: rmpc/${VERSION} (
 
   if [ -n "$id_override" ]; then
     echo "ID: $id_override" >&2

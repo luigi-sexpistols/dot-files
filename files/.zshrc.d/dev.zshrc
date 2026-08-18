@@ -1,6 +1,8 @@
 alias aws="/usr/bin/aws --no-cli-pager"
 alias code="/usr/bin/code --disable-accelerated-video-decode -n"
 
+export TERRAFORM_VERSION=1.12.2
+
 # alias terraform-docs to docker
 function terraform-docs () {
   if [ "$1" != "" ]; then
@@ -20,10 +22,10 @@ function terraform-do() {
   aws_profile="$1"
   dir="$2"
   action="${3:-plan}"
-  skip_init="${4:-false}"
+  do_init="${4:-false}"
 
   if [ -z "$aws_profile" ] || [ -z "$dir" ]; then
-      echo "Usage: terraform-apply <aws_profile> <dir>"
+      echo "Usage: terraform-apply <aws_profile> <dir> [init]"
       return 1
   fi
 
@@ -32,12 +34,18 @@ function terraform-do() {
       return 1
   fi
 
-  if [[ "$skip_init" == "false" ]]; then
-    rm -rf "${dir}/.terraform"
-    AWS_PROFILE="$aws_profile" terraform -chdir="$dir" init
+  if [ -n "$TERRAFORM_VERSION" ]; then
+    cmd="/usr/bin/terraform-$TERRAFORM_VERSION"
+  else
+    cmd="terraform"
   fi
 
-  AWS_PROFILE="$aws_profile" terraform -chdir="$dir" "$action"
+  if [[ "$do_init" != "false" ]]; then
+    rm -rf "${dir}/.terraform"
+    AWS_PROFILE="$aws_profile" "$cmd" -chdir="$dir" init
+  fi
+
+  AWS_PROFILE="$aws_profile" "$cmd" -chdir="$dir" "$action"
 }
 
 function terraform-plan () {

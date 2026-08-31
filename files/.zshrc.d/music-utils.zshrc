@@ -118,6 +118,31 @@ wal-backend () {
         echo '' > "$status_file"
     }
 
+    p-backend-test () {
+        local backends backend choice
+
+        backends="$(cat "$prefs_file" | jq -r '.update_color_scheme.backend.default[]')"
+
+        if [ -z "$backends" ]; then
+            echo "No backends found in config." >&2
+            return 1
+        fi
+
+        while read -r backend; do
+            echo "Testing backend: '$backend'..."
+            p-regenerate "$backend"
+
+            printf "Save backend '%s' for current album? [y/N] " "$backend"
+            read -r choice < /dev/tty
+
+            if [ "$choice" = "y" ] || [ "$choice" = "Y" ]; then
+                p-save "$backend"
+            else
+                echo "Skipping."
+            fi
+        done < <(printf '%s\n' "$backends")
+    }
+
     entrypoint () {
         local command="$1"
 
@@ -127,6 +152,7 @@ wal-backend () {
             'current') p-current ;;
             'status') p-current ;;
             'reset-status') p-reset-status ;;
+            'cycle-backends') p-backend-test ;;
             *)
                 echo "Usage: wal-backend {save}"
                 return 1

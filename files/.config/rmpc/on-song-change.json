@@ -254,6 +254,10 @@
           "all_gates_open": [
             "colorz",
             "wal"
+          ],
+          "timewave_zero": [
+            "colorz",
+            "wal"
           ]
         },
         "caligula_s_horse": {
@@ -540,6 +544,10 @@
           ],
           "phanerozoic_ii_mesozoic_cenozoic": [
             "haishoku"
+          ],
+          "holocene": [
+            "colorz",
+            "wal"
           ]
         },
         "haken": {
@@ -584,10 +592,45 @@
           "through_zero": [
             "colorz",
             "wal"
+          ],
+          "liminality_dream_state_return": [
+            "colorthief",
+            "colorz",
+            "haishoku",
+            "wal"
           ]
         },
         "black_midi": {
           "hellfire": [
+            "colorz",
+            "wal"
+          ]
+        },
+        "papadosio": {
+          "to_end_the_illusion_of_separation": [
+            "colorz",
+            "wal"
+          ]
+        },
+        "henge": {
+          "attention_earth": [
+            "wal"
+          ]
+        },
+        "primus": {
+          "the_desaturating_seven": [
+            "colorz",
+            "wal"
+          ]
+        },
+        "protest_the_hero": {
+          "within": [
+            "colorthief",
+            "haishoku"
+          ]
+        },
+        "odraza": {
+          "acedia": [
             "colorz",
             "wal"
           ]

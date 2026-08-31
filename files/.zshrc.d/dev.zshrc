@@ -18,43 +18,67 @@ function terraform-docs () {
     quay.io/terraform-docs/terraform-docs:latest markdown /terraform-docs
 }
 
-function terraform-do() {
-  aws_profile="$1"
-  dir="$2"
-  action="${3:-plan}"
-  do_init="${4:-false}"
+tf-do () {
+  local action=''
+  local aws_profile=''
+  local dir='.'
+  local init=false
+  local targets=()
 
-  if [ -z "$aws_profile" ] || [ -z "$dir" ]; then
-      echo "Usage: terraform-apply <aws_profile> <dir> [init]"
-      return 1
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      --action=*) action="${1#*=}"; shift ;;
+      --action) action="$2"; shift 2 ;;
+      --aws-profile=*) aws_profile="${1#*=}"; shift ;;
+      --aws-profile) aws_profile="$2"; shift 2 ;;
+      --dir=*) dir="${1#*=}"; shift ;;
+      --dir) dir="$2"; shift 2 ;;
+      --init) init=true; shift ;;
+      --target=*) targets+=("${1#*=}"); shift ;;
+      --target) targets+=("$2"); shift 2 ;;
+      --) shift; break ;;
+      *) shift ;;
+    esac
+  done
+
+  if [ -z "$action" ]; then
+    echo "No action given." >&2
+    return $LINENO
+  fi
+
+  if [[ "$action" != "plan" && "$action" != "apply" && "$action" != "destroy" ]]; then
+    echo "Action must be one of 'plan', 'apply', or 'destroy'." >&2
+    return $LINENO
+  fi
+
+  if [ -z "$aws_profile" ]; then
+    echo "No AWS profile given." >&2
+    return $LINENO
   fi
 
   if [ ! -d "$dir" ]; then
-      echo "Directory '$dir' does not exist."
-      return 1
+    echo "Path '$dir' does not exist or is not a directory." >&2
+    return $LINENO
   fi
 
-  if [ -n "$TERRAFORM_VERSION" ]; then
-    cmd="/usr/bin/terraform-$TERRAFORM_VERSION"
-  else
-    cmd="terraform"
+  export AWS_PROFILE="$aws_profile"
+
+    if [[ "$init" == true ]]; then
+    rm -rf "${dir}/.terraform/modules"
+    AWS_PROFILE=$aws_profile terraform -chdir="$dir" init
   fi
 
-  if [[ "$do_init" != "false" ]]; then
-    rm -rf "${dir}/.terraform"
-    AWS_PROFILE="$aws_profile" "$cmd" -chdir="$dir" init
-  fi
+  args=()
+  for target in "${targets[@]}"; do
+    args+=("-target" "$target")
+  done
 
-  AWS_PROFILE="$aws_profile" "$cmd" -chdir="$dir" "$action"
+  AWS_PROFILE=$aws_profile terraform -chdir="$dir" "$action" "${args[@]}"
 }
 
-function terraform-plan () {
-  terraform-do "$1" "$2" plan "$3"
-}
-
-function terraform-apply () {
-  terraform-do "$1" "$2" apply "$3"
-}
+tf-plan () {    tf-do --action=plan    --dir="$2" --aws-profile="$1" "$([ -n "$3" ] && echo -n '--init' || echo -n)"; }
+tf-apply () {   tf-do --action=apply   --dir="$2" --aws-profile="$1" "$([ -n "$3" ] && echo -n '--init' || echo -n)"; }
+tf-destroy () { tf-do --action=destroy --dir="$2" --aws-profile="$1" "$([ -n "$3" ] && echo -n '--init' || echo -n)"; }
 
 function aws-login () {
     local profile="${1:-default}"
